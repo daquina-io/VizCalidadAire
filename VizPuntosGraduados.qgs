@@ -13,10 +13,10 @@
   <mapcanvas>
     <units>degrees</units>
     <extent>
-      <xmin>-75.64866789305543193</xmin>
-      <ymin>6.22217369954289357</ymin>
-      <xmax>-75.49361840848510496</xmax>
-      <ymax>6.23503051887883064</ymax>
+      <xmin>-75.67692572304844134</xmin>
+      <ymin>6.20438072781252092</ymin>
+      <xmax>-75.36682675390778741</xmax>
+      <ymax>6.23009436648439507</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>0</projections>
@@ -582,9 +582,25 @@ def my_form_open(dialog, layer, feature):
     </Gui>
     <Digitizing>
       <DefaultSnapToleranceUnit type="int">2</DefaultSnapToleranceUnit>
+      <LayerSnappingList type="QStringList">
+        <value>points20170514173508584</value>
+      </LayerSnappingList>
+      <LayerSnappingEnabledList type="QStringList">
+        <value>disabled</value>
+      </LayerSnappingEnabledList>
       <SnappingMode type="QString">current_layer</SnappingMode>
+      <AvoidIntersectionsList type="QStringList"/>
+      <LayerSnappingToleranceUnitList type="QStringList">
+        <value>2</value>
+      </LayerSnappingToleranceUnitList>
+      <LayerSnapToList type="QStringList">
+        <value>to_vertex_and_segment</value>
+      </LayerSnapToList>
       <DefaultSnapType type="QString">off</DefaultSnapType>
       <DefaultSnapTolerance type="double">0</DefaultSnapTolerance>
+      <LayerSnappingToleranceList type="QStringList">
+        <value>0.000000</value>
+      </LayerSnappingToleranceList>
     </Digitizing>
     <qgis2web>
       <Maxzoomlevel type="QString">28</Maxzoomlevel>
@@ -598,8 +614,8 @@ def my_form_open(dialog, layer, feature):
         <value>OSM</value>
       </Baselayer>
       <Addlayerslist type="QString">Expanded</Addlayerslist>
-      <MatchprojectCRS type="bool">false</MatchprojectCRS>
       <Highlightonhover type="bool">true</Highlightonhover>
+      <MatchprojectCRS type="bool">false</MatchprojectCRS>
       <Addaddresssearch type="bool">false</Addaddresssearch>
       <Minzoomlevel type="QString">1</Minzoomlevel>
       <Geolocateuser type="bool">false</Geolocateuser>
