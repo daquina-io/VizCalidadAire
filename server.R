@@ -8,7 +8,7 @@ require(readr)
 require(lubridate)
 ##library(RColorBrewer)
 
-points <- read_csv("../data/points.csv")
+points <- read_csv("./data/points.csv")
 points <- points[points$lat != "INVALID",]
 points$date_hour <- mdy_hms(paste0(points$date," ",points$hour))
 points$date_hour <- points$date_hour - hours(5)
