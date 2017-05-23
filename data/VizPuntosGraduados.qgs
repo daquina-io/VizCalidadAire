@@ -13,10 +13,10 @@
   <mapcanvas>
     <units>degrees</units>
     <extent>
-      <xmin>-75.67692572304844134</xmin>
-      <ymin>6.20438072781252092</ymin>
-      <xmax>-75.36682675390778741</xmax>
-      <ymax>6.23009436648439507</ymax>
+      <xmin>-75.59831060390133928</xmin>
+      <ymin>6.24960805255879492</ymin>
+      <xmax>-75.55954823275870069</xmax>
+      <ymax>6.25282225739276143</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>0</projections>
@@ -496,7 +496,7 @@
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="6619244">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;date&quot;" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="lat"/>
           <column width="-1" hidden="0" type="field" name="lng"/>
@@ -555,7 +555,7 @@ def my_form_open(dialog, layer, feature):
         <default field="pm25" expression=""/>
         <default field="pm10" expression=""/>
       </defaults>
-      <previewExpression></previewExpression>
+      <previewExpression>COALESCE( "humidity", '&lt;NULL>' )</previewExpression>
     </maplayer>
   </projectlayers>
   <properties>
