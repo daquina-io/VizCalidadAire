@@ -10,6 +10,9 @@ require(lubridate)
 
 points <- read_csv("./data/points.csv")
 points <- points[points$lat != "INVALID",]
+points <- points[points$lng != "INVALID",]
+points <- points[as.numeric(points$lng) < -70,]
+points <- points[!is.na(points$lat),]
 points$date_hour <- mdy_hms(paste0(points$date," ",points$hour))
 points$date_hour <- points$date_hour - hours(5)
 
