@@ -1,0 +1,1 @@
+lat,lng,date,hour,altitude,course,speed,humidity,temperature,pm1,pm25,pm10
