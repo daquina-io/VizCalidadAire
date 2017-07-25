@@ -8,7 +8,7 @@ require(readr)
 require(lubridate)
 ##library(RColorBrewer)
 
-points <- read_csv("https://github.com/daquina-io/VizCalidadAire/blob/master/data/points.csv")
+points <- read_csv("https://github.com/daquina-io/VizCalidadAire/raw/master/data/points.csv")
 points <- points[points$lat != "INVALID",]
 points <- points[points$lng != "INVALID",]
 points <- points[as.numeric(points$lng) < -70,]
