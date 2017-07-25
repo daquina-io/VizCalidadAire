@@ -36,9 +36,14 @@ shinyServer(function(input, output) {
   })
 
   output$map <- renderLeaflet({
-    points <- data()
-    leaflet(data = points) %>%
+    leaflet() %>%
       addTiles() %>%
+       fitBounds(-75.5, 6.2, -75.57, 6.28)
+  })
+
+  observe({
+    leafletProxy("map", data = data()) %>%
+      clearShapes() %>%
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = ~as.numeric(pm25)) ## no colors
       addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = 10, color = ~colors)
   })
