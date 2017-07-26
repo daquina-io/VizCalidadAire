@@ -25,8 +25,8 @@ points <- points[points$pm25 < 500,]
 ## colors
 points$colors <- lapply(points$pm25, function(x)(
   ifelse(x < 12 , "green",
-    ifelse(x < 35 , "yellow",
-      ifelse( x < 55, "red","purple")))
+    ifelse(x < 35 && x >= 12 , "orange",
+      ifelse( x < 55 && x >= 35, "red","purple")))
 ))
 
 shinyServer(function(input, output) {
@@ -45,6 +45,6 @@ shinyServer(function(input, output) {
     leafletProxy("map", data = data()) %>%
       clearShapes() %>%
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = ~as.numeric(pm25)) ## no colors
-      addCircles(~as.numeric(lng), ~as.numeric(lat), popup = paste(pm25,date_hour), fillOpacity = 0.7, radius = 10, color = ~colors)
+      addCircles(~as.numeric(lng), ~as.numeric(lat), popup = paste("PM2.5:",points$pm25," -- ","Fecha:",points$date,points$hour), fillOpacity = 0.7, radius = 10, color = ~colors)
   })
 })
