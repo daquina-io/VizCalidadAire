@@ -7,6 +7,7 @@ require(ggplot2)
 devtools::install_github('jbkunst/highcharter')
 require(highcharter)
 require(stringr)
+require(influxdbr)
 
 
 ## ## leer de csv
@@ -36,88 +37,58 @@ layout(p, radialaxis = list(ticksuffix = "ug/m3"), orientation = 270)
 p <- plot_ly(points, r = ~mean_pm25, t = ~time, color = ~ica, alpha = 0.5, type = "scatter")
 layout(p, radialaxis = list(ticksuffix = "ug/m3"))
 
-## Highcharter EXPERIMENTAL---------------------------------------------------------
-
-dsmax <- df %>% 
-  mutate(color = colorize_vector(mean_temperaturec, "A"),
-         y = max_temperaturec - min_temperaturec) %>% 
-  select(x = tmstmp,
-         y,
-         name = date,
-         color,
-         mean = mean_temperaturec,
-         max = max_temperaturec,
-         min = min_temperaturec) %>% 
-  list.parse3()
+### To Audio meters X42
+points <- read_csv("~/Data/aire/AQAdata/volker0004.csv")
 
 
-## Some tooltips to make it a little *intercative*
-df <- read_csv("http://bl.ocks.org/bricedev/raw/458a01917183d98dff3c/sf.csv")
+### Read data from influxdb
+con <- influx_connection(scheme = c("http", "https"), host = "aqa.unloquer.org",port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
-df[1:4, 1:4]
-names(df) <- names(df) %>% 
-  str_to_lower() %>% 
-  str_replace("\\s+", "_")
+repeat{
+  points <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"mean_pm25\", mean(\"lat\") AS \"mean_lat\", mean(\"lng\") AS \"mean_lng\" FROM \"aqa\".\"autogen\".\"volker0001\" WHERE time > now() - 1h GROUP BY time(1h)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+  points <- as.data.frame(points)
+  ## quita NA
+  points <- points[complete.cases(points), ]
+  ## refine pm25
+  ## change range between 0 and 1
+  x <- points$mean_pm25
+  newMax <- 100
+  newMin <- 0
+  oldMin <- 0
+  oldMax <- 500
+  y <- unlist(lapply(x, function(x)(((x-oldMin)*newMax)/oldMax)+newMin))
+  print(y)
+  ## write file
+  write(y, file="pm25.txt", ncolumns = 1)
+  ## Sys.sleep() will not work if the CPU usage is very high; as in other critical high priority processes are running (in parallel).
+  date_time<-Sys.time()
+  while((as.numeric(Sys.time()) - as.numeric(date_time))<5.5){} #dummy while loop
+}
 
-df <- df %>% 
-  mutate(id = seq(nrow(df)),
-         date2 = as.Date(ymd(date)),
-         tmstmp = datetime_to_timestamp(date2),
-         month = month(ymd(date)))
-
-dsmax <- df %>%
-  select(x = tmstmp,
-         y = max_temperaturec) %>% 
-  list.parse3()
- 
-dsmin <- df %>% 
-  select(x = tmstmp, y = min_temperaturec) %>% 
-  list.parse3()
-
-x <- c("Min", "Mean", "Max")
-y <- sprintf("{point.%s}", tolower(x))
-tltip <- tooltip_table(x, y)
-
-hc <- highchart() %>% 
-  hc_chart(
-    type = "column",
-    polar = TRUE
-  ) %>%
-  hc_plotOptions(
-    series = list(
-      stacking = "normal",
-      showInLegend = FALSE
-    )
-  ) %>% 
-  hc_xAxis(
-    gridLineWidth = 0.5,
-    type = "datetime",
-    tickInterval = 30 * 24 * 3600 * 1000,
-    labels = list(format = "{value: %b}")
-  ) %>% 
-  hc_yAxis(
-    max = 30,
-    min = -10,
-    labels = list(format = "{value} C"),
-    showFirstLabel = FALSE
-    ) %>% 
-  hc_add_series(
-    data = dsmax
-  ) %>% 
-  hc_add_series(
-    data = dsmin,
-    color = "transparent",
-    enableMouseTracking = FALSE
-  ) %>% 
-  hc_add_theme(
-    hc_theme_smpl()
-  ) %>% 
-  hc_tooltip(
-    useHTML = TRUE,
-    headerFormat = as.character(tags$small("{point.x:%d %B, %Y}")),
-    pointFormat = tltip
-  )
-
-hc
+rwData <- function(sensor, file.name){
+  repeat{
+    points <- influx_query(con, db = "aqa", query = paste("SELECT mean(\"pm25\") AS \"mean_pm25\", mean(\"lat\") AS \"mean_lat\", mean(\"lng\") AS \"mean_lng\" FROM \"aqa\".\"autogen\".",sensor," WHERE time > now() - 1h GROUP BY time(1h)"),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+    points <- as.data.frame(points)
+    ## quita NA
+    points <- points[complete.cases(points), ]
+    ## refine pm25
+    ## map ranges
+    x <- points$mean_pm25
+    newMax <- 100
+    newMin <- 0
+    oldMin <- 0
+    oldMax <- 500
+    y <- unlist(lapply(x, function(x)(((x-oldMin)*newMax)/oldMax)+newMin))
+    print(paste(sensor, y))
+    ## write file
+    write(y, file=file.name, ncolumns = 1)
+    ## run time 
+    ## Sys.sleep() will not work if the CPU usage is very high; as in other critical high priority processes are running (in parallel).
+    date_time<-Sys.time()
+    while ((as.numeric(Sys.time()) - as.numeric(date_time))<5.5){}  # dummy while loop
+  }
+}
+rwData("volker0001", "volker0001.txt")
+rwData("volkuerC3p", "volkerC3p.txt")
 
 
