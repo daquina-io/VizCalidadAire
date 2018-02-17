@@ -29,10 +29,10 @@ require(influxdbr)
 ## read from influx
 con <- influx_connection(scheme = c("http", "https"), host = "aqa.unloquer.org",port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
-points <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", mean(\"lat\") AS \"lat\", mean(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0002\" WHERE time > now() - 30d GROUP BY time(10s)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-points2 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", mean(\"lat\") AS \"lat\", mean(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0001\" WHERE time > now() - 30d GROUP BY time(10s)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-points3 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", mean(\"lat\") AS \"lat\", mean(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0003\" WHERE time > now() - 30d GROUP BY time(10s)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-points4 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", mean(\"lat\") AS \"lat\", mean(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volkerC3p\" WHERE time > now() - 30d GROUP BY time(10s)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+points <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0002\" WHERE time > now() - 30d GROUP BY time(1d) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+points2 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0001\" WHERE time > now() - 30d GROUP BY time(1d) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+points3 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0003\" WHERE time > now() - 30d GROUP BY time(1d) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+points4 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volkerC3p\" WHERE time > now() - 30d GROUP BY time(1d) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
 points <- as.data.frame(points)
 points2 <- as.data.frame(points2)
 points3 <- as.data.frame(points3)
@@ -74,6 +74,6 @@ shinyServer(function(input, output) {
       clearShapes() %>%
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = ~as.numeric(pm25)) ## no colors
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = paste("PM2.5:",points$pm25," -- ","Fecha:",points$date,points$hour), fillOpacity = 0.7, radius = 10, color = ~colors)
-      addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = 15, color = ~colors)
+      addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 30, color = ~colors)
   })
 })
