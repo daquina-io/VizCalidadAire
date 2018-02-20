@@ -9,50 +9,59 @@ require(lubridate)
 require(influxdbr)
 ##library(RColorBrewer)
 
-## ## leer de csv
-## points <- read_csv("https://github.com/daquina-io/VizCalidadAire/raw/master/data/points.csv")
-## points <- points[points$lat != "INVALID",]
-## points <- points[points$lng != "INVALID",]
-## points <- points[as.numeric(points$lng) < -70,]
-## points <- points[!is.na(points$lat),]
-## points$date_hour <- mdy_hms(paste0(points$date," ",points$hour))
-## points$date_hour <- points$date_hour - hours(5)
-## points$hour<-  hms(points$hour)
-
-## ## intervalos fechas
-## intervalo_fechas <- function(start_end) { (interval(start_end[1],start_end[2])) }
-## intervalo_horas <- function(start_end) { (hms(start_end[1],start_end[2])) }
-
-## x <- intervalo_horas(c((points$hour[1]),(points$hour[1]+hours(1))))
-## hours(5)
-
 ## read from influx
 con <- influx_connection(scheme = c("http", "https"), host = "aqa.unloquer.org",port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
-points <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0008\" WHERE time > now() - 1d GROUP BY time(20h) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-points2 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"valenciasanchez\" WHERE time > now() - 1d GROUP BY time(20h) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-points3 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0004\" WHERE time > now() -1d GROUP BY time(20h) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-points4 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volkerC3p\" WHERE time > now() - 1d GROUP BY time(20h) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-volker0003 <- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"volker0003\" WHERE time > now() - 1d GROUP BY time(20h) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-florida_nueva<- influx_query(con, db = "aqa", query = "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".\"florida_nueva\" WHERE time > now() - 1d GROUP BY time(20h) FILL(none)",timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-points <- as.data.frame(points)
-points2 <- as.data.frame(points2)
-points3 <- as.data.frame(points3)
-points4 <- as.data.frame(points4)
-volker0003 <- as.data.frame(volker0003)
-florida_nueva <- as.data.frame(florida_nueva)
-points <- rbind(points, points2, points3, points4, volker0003, florida_nueva)
+sensorDummy <-  matrix(nrow = 0, ncol = 3)
+colnames(sensorDummy) <- c("pm25", "lat", "lng")
 
-## quita NA's'
-points[complete.cases(points), ]
+db.query <- function(sensor){
+    x <- tryCatch({
+      sensor <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - 1h GROUP BY time(1h) FILL(none) LIMIT 1",sensor),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+      as.data.frame(sensor)}
+  ,  error = function(error_message) {
+    message(sprintf("error en %s",sensor))
+    return(as.data.frame(sensorDummy))
+  })
+}
 
-points$date_hour <- rownames(points)
+points <- rbind(
+  db.query("volker0002"),
+  db.query("volker0003"),
+  db.query("volker0004"),
+  db.query("volker0005"),
+  db.query("volker0006"),
+  db.query("volker0007"),
+  db.query("volker0008"),
+  db.query("volker0009"),
+  db.query("volkerC3p"),
+  db.query("valenciasanchez"),
+  db.query("florida_nueva")
+)
 
 
 
+## ========= otra manera
 
-## exclude values > 500
-points <- points[points$pm25 < 500,]
+## points <- influx_select(con = con, 
+##                         db = "aqa", 
+##                         field_keys = "pm25,lat,lng", 
+##                         measurement = "volker0008",
+##                         where = "time > now() - 1h",
+##                         group_by = "*",
+##                         limit = 10,
+##                         order_desc = TRUE, 
+##                         return_xts = TRUE)
+
+## ## quita NA's'
+## points[complete.cases(points), ]
+## points$date_hour <- rownames(points)
+
+## ## exclude values > 500
+## points <- points[points$pm25 < 500,]
+
+
+
 
 ## colors
 points$colors <- lapply(points$pm25, function(x)(
@@ -70,7 +79,7 @@ shinyServer(function(input, output) {
   output$map <- renderLeaflet({
     leaflet() %>%
       addTiles() %>%
-       fitBounds(-75.5, 6.2, -75.57, 6.28)
+       fitBounds(-75.5, 6.16, -75.57, 6.35)
   })
 
   observe({
@@ -78,6 +87,6 @@ shinyServer(function(input, output) {
       clearShapes() %>%
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = ~as.numeric(pm25)) ## no colors
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = paste("PM2.5:",points$pm25," -- ","Fecha:",points$date,points$hour), fillOpacity = 0.7, radius = 10, color = ~colors)
-      addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 100, color = ~colors)
+      addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 100, color = ~colors,  weight = 5)
   })
 })
