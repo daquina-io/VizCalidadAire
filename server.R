@@ -78,8 +78,10 @@ shinyServer(function(input, output) {
 
   output$map <- renderLeaflet({
     leaflet() %>%
-      addTiles() %>%
-       fitBounds(-75.5, 6.16, -75.57, 6.35)
+      addProviderTiles(providers$Stamen.TonerLite, options = providerTileOptions(noWrap = TRUE) ) %>%
+      fitBounds(-75.5, 6.16, -75.57, 6.35)
+
+
   })
 
   observe({
