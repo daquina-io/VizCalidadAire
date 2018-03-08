@@ -12,7 +12,7 @@ ui <- function(request) {
                   titlePanel("Mediciones AQA"),
                   h3("Calidad del aire"),
                   a("Acerca de este proyecto",  href="http://wiki.unloquer.org/personas/brolin/proyectos/agentes_calidad_aire"),
-                  sliderInput("range", "Concentración partículas PM2.5 (ug/m3)", 0, 500,value = c(10,200), step = 1 ),
+                  sliderInput("range", "Concentración partículas PM2.5 (ug/m3)", 0, 500,value = c(1,300), step = 1 ),
                   
                   bookmarkButton()
                   )
