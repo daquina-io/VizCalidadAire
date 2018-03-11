@@ -66,7 +66,7 @@ points <- rbind(
 ## colors
 points$colors <- lapply(points$pm25, function(x)(
   ifelse(x < 12 , "green",
-  ifelse(x < 35 && x >= 12 , "yellow",
+  ifelse(x < 35 && x >= 12 , "gold",
   ifelse( x < 55 && x >= 35, "orange",
   ifelse( x < 150 && x >= 55, "red",
   ifelse( x < 250 && x >= 150, "purple",
