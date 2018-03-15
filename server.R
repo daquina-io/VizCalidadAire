@@ -17,7 +17,7 @@ colnames(sensorDummy) <- c("pm25", "lat", "lng")
 
 db.query <- function(sensor){
     x <- tryCatch({
-      sensor <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - 1h GROUP BY time(1h) FILL(none) LIMIT 1",sensor),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+      sensor <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > nhttp://192.168.4.1/wifisave?s=HOME-CAA1&p=94A1D68736EB7CD5ow() - 1h GROUP BY time(1h) FILL(none) LIMIT 1",sensor),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
       as.data.frame(sensor)}
   ,  error = function(error_message) {
     message(sprintf("error en %s",sensor))
@@ -38,6 +38,10 @@ points <- rbind(
   db.query("volker0011"),
   db.query("volker0012"),
   db.query("volker0013"),
+  db.query("volker0014"),
+  db.query("volker0015"),
+  db.query("volker0016"),
+  db.query("volker0017"),
   db.query("volkerC3p"),
   db.query("valenciasanchez"),
   db.query("florida_nueva")
