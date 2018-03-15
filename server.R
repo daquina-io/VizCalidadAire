@@ -37,7 +37,7 @@ points <- rbind(
   db.query("volker0010"),
   db.query("volker0011"),
   db.query("volker0012"),
-  db.query("volker0013"),
+ # db.query("volker0013"),
   db.query("volker0014"),
  # db.query("volker0015"),
  # db.query("volker0016"),
