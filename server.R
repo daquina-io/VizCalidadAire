@@ -18,7 +18,7 @@ colnames(sensorDummy) <- c("pm25", "lat", "lng")
 ## get data from influxdb API
 db.query <- function(sensorName){
   x <- tryCatch({
-    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqaTest\".\"autogen\".%s WHERE time > now() - 30s GROUP BY time(1s) FILL(none) LIMIT 20",sensorName),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqaTest\".\"autogen\".%s WHERE time > now() - 10m GROUP BY time(1s) FILL(none) LIMIT 260",sensorName),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
     as.data.frame(sensorData)},
     error = function(error_message) {
       message(sprintf("error en %s",sensorName))
@@ -42,53 +42,30 @@ points <- function(sensorName){
 }
 
 shinyServer(function(input, output) {
+  data <- reactive({
+    integer(input$integer)  
+})
   output$map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$Stamen.TonerLite, options = providerTileOptions(noWrap = TRUE) ) %>%
       fitBounds(-75.5, 6.16, -75.57, 6.35)
   })
-  draw <- function(sensorName){
-    observe({
-      invalidateLater(1000)
-      dataPoints <- points(sensorName)
-       leafletProxy("map", data = dataPoints[19, ]) %>%
-         addCircles(layerId = paste0(sensorName,"A"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 50, color = ~colors,  weight = 5)
-       leafletProxy("map", data = dataPoints[15, ]) %>%
-         addCircles(layerId = paste0(sensorName,"B"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 40, color = ~colors,  weight = 5)
-       leafletProxy("map", data = dataPoints[13, ]) %>%
-        addCircles(layerId = paste0(sensorName,"C"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 30, color = ~colors,  weight = 5)
-      leafletProxy("map", data = dataPoints[9, ]) %>%
-        addCircles(layerId = paste0(sensorName,"D"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~colors,  weight = 5)
-      leafletProxy("map", data = dataPoints[5, ]) %>%
-        addCircles(layerId = paste0(sensorName,"E"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = 10, color = ~colors,  weight = 5)
-      leafletProxy("map", data = dataPoints[1, ]) %>%
-        addCircles(layerId = paste0(sensorName,"F"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.5, radius = 5, color = ~colors,  weight = 5)
-    })
-  }
-  ## can construct names with as.character((c:10))
-  # draw("v")
-  ## draw("002")
-  ## draw("volkerX002")
-  lapply(paste0("V",as.character(c(0:10))),
- function(sensorName){
-    observe({
-      invalidateLater(1000)
-      dataPoints <- points(sensorName)
-       leafletProxy("map", data = dataPoints[19, ]) %>%
-         addCircles(layerId = paste0(sensorName,"A"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 50, color = ~colors,  weight = 5, label = sensorName )
-       leafletProxy("map", data = dataPoints[13, ]) %>%
-         addCircles(layerId = paste0(sensorName,"B"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~colors,  weight = 5)
-       leafletProxy("map", data = dataPoints[10, ]) %>%
-        addCircles(layerId = paste0(sensorName,"C"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 15, color = ~colors,  weight = 5)
-      leafletProxy("map", data = dataPoints[7, ]) %>%
-        addCircles(layerId = paste0(sensorName,"D"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 10, color = ~colors,  weight = 5)
-      leafletProxy("map", data = dataPoints[5, ]) %>%
-        addCircles(layerId = paste0(sensorName,"E"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = 5, color = ~colors,  weight = 5)
-      leafletProxy("map", data = dataPoints[1, ]) %>%
-        addCircles(layerId = paste0(sensorName,"F"), ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.5, radius = 3, color = ~colors,  weight = 5)
-    })
-  }
- )
+
+  numberOfLectures <- 25 ## TODO reactive with a slide in UI
+  lapply(paste0("V",as.character(c(0:3))),
+         function(sensorName){
+           observe({
+             dataPoints <- points(sensorName)
+             invalidateLater(2000)
+             toId <- paste0(sensorName,LETTERS)
+             toRadious <- seq(from = 10, to = 100, by = 2) ## danger of overflow TODO
+             for( i in 1:length(data())){
+               leafletProxy("map", data = dataPoints[i*5, ]) %>%
+                 addCircles(layerId = toId[i], ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = toRadious[i], color = ~colors,  weight = 5, label = sensorName )
+             }
+           })
+         }
+         )
 })
 
 
