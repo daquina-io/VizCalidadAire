@@ -99,6 +99,6 @@ shinyServer(function(input, output) {
       clearShapes() %>%
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = ~as.numeric(pm25)) ## no colors
       ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = paste("PM2.5:",points$pm25," -- ","Fecha:",points$date,points$hour), fillOpacity = 0.7, radius = 10, color = ~colors)
-      addCircles(~as.numeric(lng), ~as.numeric(lat), fillOpacity = 0.9, radius = 100, color = ~colors,  weight = 5, label = ~as.character(pm25) )
+      addCircles(~as.numeric(lng), ~as.numeric(lat), fillOpacity = 0.9, radius = 100, color = ~colors,  weight = 5, label = c("PM2.5=",~as.character(pm25)) )
   })
 })
