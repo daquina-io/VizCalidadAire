@@ -41,6 +41,12 @@ points <- function(sensorName){
    return(df)
 }
 
+## get measurments names
+measurements <- unlist(show_measurements(con = con,
+                                 db = "aqa"
+                                 ))
+
+
 shinyServer(function(input, output) {
   data <- reactive({
     integer(input$integer)
@@ -51,13 +57,13 @@ shinyServer(function(input, output) {
       fitBounds(-74.079,4.5923,-74.065, 4.5928 )
   })
   ## TODO: must discover measurments
-  lapply(paste0("V",as.character(c(0:3))), 
+  lapply(measurements, 
          function(sensorName){
            observe({
              dataPoints <- points(sensorName)
              invalidateLater(4000)
              toId <- paste0(sensorName,LETTERS)
-             toRemoveIds <- tail(toId,n = 5  )
+             ## toRemoveIds <- tail(toId,n = 5  )
              toRadious <- seq(from = 10, to = 100, by = 2) ## danger of overflow TODO
              for( i in 1:length(data())){
                leafletProxy("map", data = dataPoints[i*5, ]) %>%
