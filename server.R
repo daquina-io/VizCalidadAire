@@ -9,7 +9,7 @@ require(lubridate)
 require(influxdbr)
 
 ## read from influx
-con <- influx_connection(scheme = c("http", "https"), host = "localhost",port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
+con <- influx_connection(scheme = c("http", "https"), host = "aqa.unloquer.org",port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
 ## dummy data to initialize dataframe and to create empty dataframe
 sensorDummy <-  matrix(nrow = 0, ncol = 3)
@@ -18,7 +18,7 @@ colnames(sensorDummy) <- c("pm25", "lat", "lng")
 ## get data from influxdb API
 db.query <- function(sensorName){
   x <- tryCatch({
-    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqaTest\".\"autogen\".%s WHERE time > now() - 10m GROUP BY time(1s) FILL(none) LIMIT 260",sensorName),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - 10m GROUP BY time(1s) FILL(none) LIMIT 260",sensorName),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
     as.data.frame(sensorData)},
     error = function(error_message) {
       message(sprintf("error en %s",sensorName))
