@@ -43,29 +43,31 @@ points <- function(sensorName){
 
 shinyServer(function(input, output) {
   data <- reactive({
-    integer(input$integer)  
+    integer(input$integer)
 })
   output$map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$Stamen.TonerLite, options = providerTileOptions(noWrap = TRUE) ) %>%
-      fitBounds(-75.5, 6.16, -75.57, 6.35)
+      fitBounds(-74.079,4.5923,-74.065, 4.5928 )
   })
-
-  numberOfLectures <- 25 ## TODO reactive with a slide in UI
-  lapply(paste0("V",as.character(c(0:3))),
+  ## TODO: must discover measurments
+  lapply(paste0("V",as.character(c(0:3))), 
          function(sensorName){
            observe({
              dataPoints <- points(sensorName)
-             invalidateLater(2000)
+             invalidateLater(4000)
              toId <- paste0(sensorName,LETTERS)
+             toRemoveIds <- tail(toId,n = 5  )
              toRadious <- seq(from = 10, to = 100, by = 2) ## danger of overflow TODO
              for( i in 1:length(data())){
                leafletProxy("map", data = dataPoints[i*5, ]) %>%
                  addCircles(layerId = toId[i], ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = toRadious[i], color = ~colors,  weight = 5, label = sensorName )
+               ## FAIL attempt to erase circles
+               ## leafletProxy("map") %>%  
+               ## removeShape(toRemoveIds)
              }
            })
-         }
-         )
+         })
 })
 
 
