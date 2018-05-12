@@ -53,7 +53,7 @@ shinyServer(function(input, output) {
 })
   output$map <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$Stamen.TonerLite, options = providerTileOptions(noWrap = TRUE) ) %>%
+      addProviderTiles(providers$CartoDB.Positron, options = providerTileOptions(noWrap = TRUE) ) %>%
       fitBounds(-74.079,4.5923,-74.065, 4.5928 )
   })
   ## TODO: must discover measurments
