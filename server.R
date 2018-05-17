@@ -21,7 +21,7 @@ colnames(sensorDummy) <- c("pm25", "lat", "lng")
 ## get data from influxdb API
 db.query <- function(sensorName){
   x <- tryCatch({
-    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - 3m GROUP BY time(1s) FILL(none) LIMIT 260",sensorName),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - 20s GROUP BY time(1s) FILL(none) LIMIT 15",sensorName),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
     as.data.frame(sensorData)},
     error = function(error_message) {
       message(sprintf("error en %s",sensorName))
