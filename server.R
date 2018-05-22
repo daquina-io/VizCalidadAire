@@ -19,9 +19,9 @@ sensorDummy <-  matrix(nrow = 0, ncol = 3)
 colnames(sensorDummy) <- c("pm25", "lat", "lng")
 
 ## get data from influxdb API
-db.query <- function(sensorName){
+db.query <- function(sensorName, time){
   x <- tryCatch({
-    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - 20s GROUP BY time(1s) FILL(none) LIMIT 15",sensorName),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - %dm GROUP BY time(1s) FILL(none) LIMIT 150",sensorName,time),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
     as.data.frame(sensorData)},
     error = function(error_message) {
       message(sprintf("error en %s",sensorName))
@@ -29,9 +29,9 @@ db.query <- function(sensorName){
     })
 }
 
-points <- function(sensorName){
+points <- function(sensorName, time){
   df <- rbind(
-    db.query(sensorName)
+    db.query(sensorName, time)
   )
   df$colors <- lapply(df$pm25, function(x)(
     ifelse(x < 12 , "green",
@@ -51,28 +51,28 @@ measurements <- unlist(show_measurements(con = con,
 
 shinyServer(function(input, output) {
   data <- reactive({
-    integer(input$integer)
+    as.numeric(input$integer)
 })
   output$map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$CartoDB.Positron, options = providerTileOptions(noWrap = TRUE) ) %>%
-      fitBounds(-74.079,4.5923,-74.065, 4.5928 )
+      ##fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
+     fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
   })
-  ## TODO: must discover measurments
-  lapply(measurements, 
+  lapply(measurements,
          function(sensorName){
            observe({
-             dataPoints <- points(sensorName)
-             invalidateLater(4000)
+             dataPoints <- points(sensorName, data())
+             invalidateLater(1000)
              toId <- paste0(sensorName,LETTERS)
              ## toRemoveIds <- tail(toId,n = 5  )
              toRadious <- seq(from = 10, to = 100, by = 2) ## danger of overflow TODO
-             for( i in 1:length(data())){
-               leafletProxy("map", data = dataPoints[i*5, ]) %>%
+             for( i in 1:10){
+               leafletProxy("map", data = dataPoints[i*2, ]) %>%
                  addCircles(layerId = toId[i], ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = toRadious[i], color = ~colors,  weight = 5, label = sensorName )
                ## FAIL attempt to erase circles
-               ## leafletProxy("map") %>%  
-               ## removeShape(toRemoveIds)
+               ## leafletProxy("map") %>%
+                ##removeShape(toRemoveIds)
              }
            })
          })
