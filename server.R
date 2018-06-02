@@ -29,6 +29,7 @@ db.query <- function(sensorName, time){
     })
 }
 
+
 points <- function(sensorName, time){
   df <- rbind(
     db.query(sensorName, time)
@@ -45,9 +46,15 @@ points <- function(sensorName, time){
 }
 
 ## get measurments names
-measurements <- unlist(show_measurements(con = con,
-                                 db = "aqa"
-                                 ))
+measurements <- unlist( show_measurements(con = con,
+                                          db = "aqa"
+                                          ))
+## -------test 
+## influx_query(con = con , db = "aqa", query ="SELECT * FROM \"aqa\".\"autogen\".\"volker0016\" WHERE time > now() - 1h")
+
+
+x <- db.query("valenciasanchez", 5)
+
 
 shinyServer(function(input, output) {
   data <- reactive({
@@ -56,8 +63,8 @@ shinyServer(function(input, output) {
   output$map <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$CartoDB.Positron, options = providerTileOptions(noWrap = TRUE) ) %>%
-      ##fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
-     fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
+      fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
+     ## fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
   })
   lapply(measurements,
          function(sensorName){
