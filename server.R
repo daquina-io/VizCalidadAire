@@ -53,7 +53,7 @@ measurements <- unlist( show_measurements(con = con,
 ## influx_query(con = con , db = "aqa", query ="SELECT * FROM \"aqa\".\"autogen\".\"volker0016\" WHERE time > now() - 1h")
 
 
-x <- db.query("valenciasanchez", 5)
+#x <- db.query("valenciasanchez", 5)
 
 
 shinyServer(function(input, output) {
