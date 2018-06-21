@@ -21,7 +21,7 @@ colnames(sensorDummy) <- c("pm25", "lat", "lng")
 ## get data from influxdb API
 db.query <- function(sensorName, time){
   x <- tryCatch({
-    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - %dm GROUP BY time(1s) FILL(none) LIMIT 150",sensorName,time),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+    sensorData <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM \"aqa\".\"autogen\".%s WHERE time > now() - %dm GROUP BY time(2s) FILL(none) LIMIT 150",sensorName,time),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
     as.data.frame(sensorData)},
     error = function(error_message) {
       message(sprintf("error en %s",sensorName))
@@ -62,15 +62,17 @@ shinyServer(function(input, output) {
 })
   output$map <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$CartoDB.Positron, options = providerTileOptions(noWrap = TRUE) ) %>%
-      fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
-     ## fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
+      addTiles() %>%
+      #addProviderTiles(providers$CartoDB.Positron, options = providerTileOptions(noWrap = TRUE) ) %>%
+      ##fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
+     fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
   })
+  
   lapply(measurements,
          function(sensorName){
            observe({
              dataPoints <- points(sensorName, data())
-             invalidateLater(1000)
+             invalidateLater(2000)
              toId <- paste0(sensorName,LETTERS)
              ## toRemoveIds <- tail(toId,n = 5  )
              toRadious <- seq(from = 10, to = 100, by = 2) ## danger of overflow TODO
