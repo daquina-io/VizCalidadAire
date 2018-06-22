@@ -10,11 +10,9 @@ ui <- function(request) {
     leafletOutput("map", width = "100%", height = "100%"),
     absolutePanel(top = 5, right = 5,
                   titlePanel("Mediciones AQA"),
-                  h3("Calidad del aire"),
-                  a("Acerca de este proyecto",  href="http://wiki.unloquer.org/personas/brolin/proyectos/agentes_calidad_aire"),
-                  sliderInput("range", "Concentración partículas PM2.5 (ug/m3)", 0, 500,value = c(1,300), step = 1 ),
-                  
-                  bookmarkButton()
+                  p("Calidad del aire"),
+                  a("Acerca de este proyecto",  href="http://wiki.unloquer.org/personas/brolin/proyectos/agentes_calidad_aire")
+                 
                   )
   )
 }

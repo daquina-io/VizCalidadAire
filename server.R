@@ -45,6 +45,8 @@ points <- function(sensorName){
    return(df)
 }
 
+points("volker0016")
+
 shinyServer(function(input, output) {
   data <- reactive({
    ## points %>% filter( pm25 >= input$range[1], pm25 <= input$range[2] )  -> filtered_points
@@ -53,7 +55,7 @@ shinyServer(function(input, output) {
 
   output$map <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$CartoDB.Positron, options = providerTileOptions(noWrap = TRUE) ) %>%
+      addProviderTiles(providers$OpenStreetMap.BlackAndWhite, options = providerTileOptions(noWrap = TRUE) ) %>%
       fitBounds(-75.5, 6.16, -75.57, 6.35)
   })
 
@@ -61,16 +63,13 @@ shinyServer(function(input, output) {
          function(sensorName){
            observe({
              dataPoints <- points(sensorName)
-             invalidateLater(4000)
              toId <- paste0(sensorName,LETTERS)
              ## toRemoveIds <- tail(toId,n = 5  )
              toRadious <- seq(from = 10, to = 100, by = 2) ## danger of overflow TODO
              for( i in 1:length(data())){
-               leafletProxy("map", data = dataPoints[i*5, ]) %>%
-                 addCircles(layerId = toId[i], ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = toRadious[i], color = ~colors,  weight = 5, label = sensorName )
-               ## FAIL attempt to erase circles
-               ## leafletProxy("map") %>%  
-               ## removeShape(toRemoveIds)
+               leafletProxy("map", data = dataPoints[i, ]) %>%
+                 addCircles(layerId = toId[i], ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 50, color = ~colors,  weight = 20, label = sensorName )
+              
              }
            })
          })
