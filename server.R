@@ -52,10 +52,6 @@ measurements <- unlist( show_measurements(con = con,
 ## -------test 
 ## influx_query(con = con , db = "aqa", query ="SELECT * FROM \"aqa\".\"autogen\".\"volker0016\" WHERE time > now() - 1h")
 
-
-#x <- db.query("valenciasanchez", 5)
-
-
 shinyServer(function(input, output) {
   data <- reactive({
     as.numeric(input$integer)
@@ -63,7 +59,7 @@ shinyServer(function(input, output) {
   output$map <- renderLeaflet({
     leaflet() %>%
       addTiles() %>%
-      #addProviderTiles(providers$CartoDB.Positron, options = providerTileOptions(noWrap = TRUE) ) %>%
+      addProviderTiles(providers$OpenStreetMap.BlackAndWhite, options = providerTileOptions(noWrap = TRUE) ) %>%
       ##fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
      fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
   })
@@ -78,7 +74,7 @@ shinyServer(function(input, output) {
              toRadious <- seq(from = 10, to = 100, by = 2) ## danger of overflow TODO
              for( i in 1:10){
                leafletProxy("map", data = dataPoints[i*2, ]) %>%
-                 addCircles(layerId = toId[i], ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = toRadious[i], color = ~colors,  weight = 5, label = sensorName )
+                 addCircles(layerId = toId[i], ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = toRadious[i], color = ~colors,  weight = 20, label = sensorName )
                ## FAIL attempt to erase circles
                ## leafletProxy("map") %>%
                 ##removeShape(toRemoveIds)
