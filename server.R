@@ -98,7 +98,7 @@ sensores <- paste0("aqa.autogen.",measurements,collapse=",")
 
 ## data <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1m GROUP BY time(2s) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h")) %>% setNames(sensores) %>%  as_tibble
 
-data <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1m GROUP BY time(2s) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+data <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 15m GROUP BY time(1m) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
 
 
 x <- as.data.frame(matrix(unlist(data), ncol=3, byrow = TRUE))
