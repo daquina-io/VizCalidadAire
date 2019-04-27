@@ -52,6 +52,72 @@ points <- function(sensorName, time){
    return(df)
 }
 
+measurements <- unlist( show_measurements(con = con,
+                                          db = "aqa"
+                                          ))
+
+sensores <- paste0("aqa.autogen.",measurements,collapse=",")
+
+## data <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1m GROUP BY time(2s) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h")) %>% setNames(sensores) %>%  as_tibble
+
+data <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1h GROUP BY time(1h) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+
+
+x <- as.data.frame(matrix(unlist(data), ncol=3, byrow = TRUE))
+
+
+
+## crear una variable temporal
+## map(data[[1]], function(x){
+##   print("test")
+##   x
+## })
+
+#data[[1]][4]
+#data[[1]]$aqalacima
+## se construye la trama 
+#x <- as.data.frame(cbind(data[[1]][1],data[[1]][2],data[[1]][2])) ## aqui voy !! debo hacer que el dataframe traiga todos los datos
+## x <- lapply(data, function(x){
+##   lapply(x, function(y){
+##     print(y) 
+##   })
+## })
+
+## x <- lapply(data, function(x){
+##   print(x)
+## })
+
+## names
+colnames(x) <- c("pm25","lat","lng")
+
+## add sensor name from data structure
+x$sensorName <-  unique(names(data[[1]]))
+
+## add ICApm25 colors
+x$color <- lapply(x$pm25, function(x)(
+  ifelse(x < 12 , "green",
+  ifelse(x < 35 && x >= 12 , "gold",
+  ifelse( x < 55 && x >= 35, "orange",
+  ifelse( x < 150 && x >= 55, "red",
+  ifelse( x < 250 && x >= 150, "purple",
+         "maroon")))))))
+
+
+
+shinyServer(function(input, output) {
+  data <- reactive({
+    as.numeric(input$integer)
+})
+  output$map <- renderLeaflet({
+    leaflet() %>%
+      addTiles() %>%
+      addProviderTiles(providers$OpenStreetMap.BlackAndWhite, options = providerTileOptions(noWrap = TRUE) ) %>%
+      ##fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
+     fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
+  })
+  leafletProxy("map", data = x )  %>%
+    addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
+  })
 
 
 ## -------test 
@@ -87,53 +153,3 @@ points <- function(sensorName, time){
 ##            })
 ##          })
 ## })
-
-
-### ''''''''''''''''''''' test ''''''''''''''' 
-## get measurments names TODO: Must be only active sensors, how to filter that? by date?
-measurements <- unlist( show_measurements(con = con,
-                                          db = "aqa"
-                                          ))
-sensores <- paste0("aqa.autogen.",measurements,collapse=",")
-
-## data <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1m GROUP BY time(2s) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h")) %>% setNames(sensores) %>%  as_tibble
-
-data <- influx_query(con, db = "aqa", query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1h GROUP BY time(1h) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-
-
-x <- as.data.frame(matrix(unlist(data), ncol=3, byrow = TRUE))
-
-## crear una variable temporal
-## map(data[[1]], function(x){
-##   print("test")
-##   x
-## })
-
-#data[[1]][4]
-#data[[1]]$aqalacima
-## se construye la trama 
-#x <- as.data.frame(cbind(data[[1]][1],data[[1]][2],data[[1]][2])) ## aqui voy !! debo hacer que el dataframe traiga todos los datos
-## x <- lapply(data, function(x){
-##   lapply(x, function(y){
-##     print(y) 
-##   })
-## })
-
-## x <- lapply(data, function(x){
-##   print(x)
-## })
-colnames(x) <- c("pm25","lat","lng")
-shinyServer(function(input, output) {
-  data <- reactive({
-    as.numeric(input$integer)
-})
-  output$map <- renderLeaflet({
-    leaflet() %>%
-      addTiles() %>%
-      addProviderTiles(providers$OpenStreetMap.BlackAndWhite, options = providerTileOptions(noWrap = TRUE) ) %>%
-      ##fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
-     fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
-  })
-  leafletProxy("map", data = x )  %>%
-    addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = "green",  weight = 20, label = rownames(x) )
-  })
