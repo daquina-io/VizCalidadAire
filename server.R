@@ -110,8 +110,7 @@ shinyServer(function(input, output) {
 })
   output$map <- renderLeaflet({
     leaflet() %>%
-      addTiles() %>%
-      addProviderTiles(providers$OpenStreetMap.BlackAndWhite, options = providerTileOptions(noWrap = TRUE) ) %>%
+      addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>%
       ##fitBounds(-74.079,4.5923,-74.065, 4.5928 ) ## la candelaria Bogota
      fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
   })
