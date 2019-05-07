@@ -106,7 +106,7 @@ x$color <- lapply(x$pm25, function(x)(
 
 shinyServer(function(input, output) {
   data <- reactive({
-    as.numeric(input$integer)
+   #as.numeric(input$integer)
 })
   output$map <- renderLeaflet({
     leaflet() %>%
