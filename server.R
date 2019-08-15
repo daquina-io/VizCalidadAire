@@ -10,9 +10,11 @@ if(!require(lubridate)) install.packages('lubridate')
 if(!require(influxdbr)) install.packages('influxdbr')
 
 ## conexión remota
-host <- "gblabs.co"
+host <- ## "gblabs.co"
+        "aqa.unloquer.org"
         ## "aireciudadano.servehttp.com"
-db <-  "canairio"
+db <-   ## "canairio"
+        "aqa"
         ## "ENVdataDB"
 con <- influx_connection(scheme = c("http", "https"), host = host,port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
