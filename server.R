@@ -3,8 +3,9 @@ rm(list=ls())
 if(!require(tidyverse)) install.packages('tidyverse')
 if(!require(shiny)) install.packages('shiny')
 if(!require(leaflet)) {
-  devtools::install_github('rstudio/leaflet')
-  devtools::install_github('bhaskarvk/leaflet.extras')
+    devtools::install_github('rstudio/leaflet')
+    devtools::install_github("rstudio/leaflet.providers")
+    devtools::install_github('bhaskarvk/leaflet.extras')
 }
 if(!require(lubridate)) install.packages('lubridate')
 if(!require(influxdbr)) install.packages('influxdbr')
@@ -95,6 +96,7 @@ if(host == "gblabs.co") {
 }
 
 x <- unique(x)
+x <- x[!is.na(x$lng),]
 
 ## No funciona encuadre
 encuadre <- function(servidor) {
@@ -109,8 +111,8 @@ shinyServer(function(input, output) {
   })
 
   output$map <- renderLeaflet({
-    leaflet() %>%
-        addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>% fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
+      leaflet() %>%
+          addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>% fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
      ##  ## medellin/test
   })
 
