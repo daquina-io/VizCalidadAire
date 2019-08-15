@@ -10,11 +10,11 @@ if(!require(lubridate)) install.packages('lubridate')
 if(!require(influxdbr)) install.packages('influxdbr')
 
 ## conexión remota
-host <- ## "gblabs.co"
-        "aqa.unloquer.org"
+host <- "gblabs.co"
+        ## "aqa.unloquer.org"
         ## "aireciudadano.servehttp.com"
-db <-   ## "canairio"
-        "aqa"
+db <-   "canairio"
+        ## "aqa"
         ## "ENVdataDB"
 con <- influx_connection(scheme = c("http", "https"), host = host,port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
@@ -57,7 +57,6 @@ sensores <- paste0("\"",db,"\"",".autogen.","\"",measurements,"\"",collapse=",")
 
 data <- influx_query(con, db = db, query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1h GROUP BY time(1h) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
 
-
 x <- as.data.frame(matrix(unlist(data), ncol=3, byrow = TRUE))
 
 ## names
@@ -75,27 +74,46 @@ x$color <- (lapply(x$pm25, function(x)(
   ifelse( x < 250 && x >= 150, "purple",
          "maroon"))))))) %>% enframe %>% unnest)$value
 
-ubicacion <- read_tsv("./canairio_sensors_mod.csv")
+if(host == "gblabs.co") {
+    ubicacion <- read_tsv("./canairio_sensors_mod.csv")
+    x <- x %>% left_join(ubicacion, by="sensorName")
+    x <- tibble(
+        pm25 = x$pm25,
+        sensorName = x$sensorName,
+        color = x$color,
+        lat = x$lat.y,
+        lng = x$lng.y
+    )
+} else {
+    x <- tibble(
+        pm25 = x$pm25,
+        sensorName = x$sensorName,
+        color = x$color,
+        lat = x$lat,
+        lng = x$lng
+    )
+}
 
-x <- tibble(
-    pm25 = x$pm25,
-    sensorName = x$sensorName,
-    color = x$color
-)
+x <- unique(x)
 
-x <- x %>% left_join(ubicacion, by="sensorName")
+## No funciona encuadre
+encuadre <- function(servidor) {
+    if(servidor == "gblabs.co") return(fitBounds(-74.079,4.46,-74.065, 4.823))##Bogotá
+    fitBounds(-75.5, 6.16, -75.57, 6.35)#Medellín
+}
 
 ## write_tsv(data.frame(sensor=x$sensorName),"/tmp/aireciudadano.txt")
 shinyServer(function(input, output) {
   data <- reactive({
    #as.numeric(input$integer)
-})
+  })
+
   output$map <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>%
-        fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
-     ## fitBounds(-75.5, 6.16, -75.57, 6.35) ## medellin/test
+        addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>% fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
+     ##  ## medellin/test
   })
+
   leafletProxy("map", data = x )  %>%
     addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
   })
