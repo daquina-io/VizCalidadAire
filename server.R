@@ -100,7 +100,7 @@ x <- x[!is.na(x$lng),]
 
 ## No funciona encuadre
 encuadre <- function(servidor) {
-    if(servidor == "gblabs.co") return(fitBounds(-74.079,4.46,-74.065, 4.823))##Bogotá
+    if(servidor == "glabs.co") return(fitBounds(-74.079,4.46,-74.065, 4.823))##Bogotá
     fitBounds(-75.5, 6.16, -75.57, 6.35)#Medellín
 }
 
@@ -109,11 +109,14 @@ shinyServer(function(input, output) {
   data <- reactive({
    #as.numeric(input$integer)
   })
-  leaflet() %>%
-      addTiles() %>%
-      ## addProviderTiles(providers$OpenStreetMap.Mapnik, options = providerTileOptions(noWrap = TRUE) ) %>%
-      fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
-     ##  ## medellin/test
+
+  output$map <- renderLeaflet({
+      leaflet() %>%
+          addProviderTiles(providers$OpenStreetMap.Mapnik, options = providerTileOptions(noWrap = TRUE) ) %>%
+          fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
+      ##  ## medellin/test
+  })
+
   leafletProxy("map", data = x )  %>%
-    addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
+      addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
 })
