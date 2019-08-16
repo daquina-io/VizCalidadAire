@@ -1,58 +1,117 @@
+rm(list=ls())
+
+if(!require(tidyverse)) install.packages('tidyverse')
 if(!require(shiny)) install.packages('shiny')
-if(!require(dplyr)) install.packages('dplyr')
 if(!require(leaflet)) {
-  devtools::install_github('rstudio/leaflet')
-  devtools::install_github('bhaskarvk/leaflet.extras')
+    devtools::install_github('rstudio/leaflet')
+    devtools::install_github("rstudio/leaflet.providers")
+    devtools::install_github('bhaskarvk/leaflet.extras')
 }
-require(readr)
-require(lubridate)
-##library(RColorBrewer)
+if(!require(lubridate)) install.packages('lubridate')
+if(!require(influxdbr)) install.packages('influxdbr')
 
-points <- read_csv("https://github.com/daquina-io/VizCalidadAire/raw/master/data/points.csv")
-points <- points[points$lat != "INVALID",]
-points <- points[points$lng != "INVALID",]
-points <- points[as.numeric(points$lng) < -70,]
-points <- points[!is.na(points$lat),]
-points$date_hour <- mdy_hms(paste0(points$date," ",points$hour))
-points$date_hour <- points$date_hour - hours(5)
-points$hour<-  hms(points$hour)
+## conexión remota
+host <- "gblabs.co"
+        ## "aqa.unloquer.org"
+        ## "aireciudadano.servehttp.com"
+db <-   "canairio"
+        ## "aqa"
+        ## "ENVdataDB"
+con <- influx_connection(scheme = c("http", "https"), host = host,port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
-## intervalos fechas
-intervalo_fechas <- function(start_end) { (interval(start_end[1],start_end[2])) }
-intervalo_horas <- function(start_end) { (hms(start_end[1],start_end[2])) }
+## dummy data to initialize dataframe and to create empty dataframe
+sensorDummy <-  matrix(nrow = 0, ncol = 3)
+colnames(sensorDummy) <- c("pm25", "lat", "lng")
+
+## get data from influxdb API
+db.query <- function(sensorName, time){
+  x <- tryCatch({
+    sensorData <- influx_query(con, db = db, query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s.\"autogen\".\"\"%s\"\" WHERE time > now() - %dm GROUP BY time(2s) FILL(none) LIMIT 150",db,sensorName,time),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
+    as.data.frame(sensorData)},
+    error = function(error_message) {
+      message(sprintf("error en %s",sensorName))
+      return(as.data.frame(sensorDummy))
+    })
+}
+
+points <- function(sensorName, time){
+  df <- rbind(
+    db.query(sensorName, time)
+  )
+  df$colors <- lapply(df$pm25, function(x)(
+    ifelse(x < 12 , "green",
+    ifelse(x < 35 && x >= 12 , "gold",
+    ifelse( x < 55 && x >= 35, "orange",
+    ifelse( x < 150 && x >= 55, "red",
+    ifelse( x < 250 && x >= 150, "purple",
+           "maroon")))))
+  ))
+   return(df)
+}
+
+measurements <- unlist( show_measurements(con = con,
+                                          db = db
+                                          ))
+
+sensores <- paste0("\"",db,"\"",".autogen.","\"",measurements,"\"",collapse=",")
 
 
+data <- influx_query(con, db = db, query = sprintf("SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1h GROUP BY time(1h) FILL(none) LIMIT 1",sensores),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
 
-x <- intervalo_horas(c((points$hour[1]),(points$hour[1]+hours(1))))
-hours(5)
+x <- as.data.frame(matrix(unlist(data), ncol=3, byrow = TRUE))
 
-## exclude values > 500
-points <- points[points$pm25 < 500,]
+## names
+colnames(x) <- c("pm25","lat","lng")
 
-## colors
-points$colors <- lapply(points$pm25, function(x)(
+## add sensor name from data structure
+x$sensorName <-  unique(names(data[[1]]))
+
+## add ICApm25 colors
+x$color <- (lapply(x$pm25, function(x)(
   ifelse(x < 12 , "green",
-    ifelse(x < 35 && x >= 12 , "orange",
-      ifelse( x < 55 && x >= 35, "red","purple")))
-))
+  ifelse(x < 35 && x >= 12 , "gold",
+  ifelse( x < 55 && x >= 35, "orange",
+  ifelse( x < 150 && x >= 55, "red",
+  ifelse( x < 250 && x >= 150, "purple",
+         "maroon"))))))) %>% enframe %>% unnest)$value
 
+if(host == "gblabs.co") {
+    ubicacion <- read_tsv("./canairio_sensors_mod.csv")
+    x <- x %>% left_join(ubicacion, by="sensorName")
+    x <- tibble(
+        pm25 = x$pm25,
+        sensorName = x$sensorName,
+        color = x$color,
+        lat = x$lat.y,
+        lng = x$lng.y
+    )
+} else {
+    x <- tibble(
+        pm25 = x$pm25,
+        sensorName = x$sensorName,
+        color = x$color,
+        lat = x$lat,
+        lng = x$lng
+    )
+}
+
+x <- unique(x)
+x <- x[!is.na(x$lng),]
+
+## No funciona encuadre
+encuadre <- function(servidor) {
+    if(servidor == "gblabs.co") return(fitBounds(-74.079,4.46,-74.065, 4.823))##Bogotá
+    fitBounds(-75.5, 6.16, -75.57, 6.35)#Medellín
+}
+
+## write_tsv(data.frame(sensor=x$sensorName),"/tmp/aireciudadano.txt")
 shinyServer(function(input, output) {
   data <- reactive({
-    points %>% filter( wday(date_hour, label=TRUE, abbr=FALSE) %in% input$wday, pm25 >= input$range[1], pm25 <= input$range[2], date_hour %within% intervalo_fechas(input$dates), hour >= hours(input$hours[1]), hour <= hours(input$hours[2]) )  -> filtered_points
-    filtered_points
+   #as.numeric(input$integer)
   })
-
-  output$map <- renderLeaflet({
-    leaflet() %>%
-      addProviderTiles(providers$Stamen.TonerLite, options = providerTileOptions(noWrap = TRUE) ) %>%
-       fitBounds(-75.5, 6.2, -75.57, 6.28)
-  })
-
-  observe({
-    leafletProxy("map", data = data()) %>%
-      clearShapes() %>%
-      ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = ~as.numeric(pm25)) ## no colors
-      ## addCircles(~as.numeric(lng), ~as.numeric(lat), popup = paste("PM2.5:",points$pm25," -- ","Fecha:",points$date,points$hour), fillOpacity = 0.7, radius = 10, color = ~colors)
-      addCircles(~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.7, radius = 10, color = ~colors)
-  })
+      leaflet() %>%
+          addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>% fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
+     ##  ## medellin/test
+  leafletProxy("map", data = x )  %>%
+    addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
 })
