@@ -109,9 +109,10 @@ shinyServer(function(input, output) {
   data <- reactive({
    #as.numeric(input$integer)
   })
-      leaflet() %>%
-          ## addProviderTiles(providers$OpenStreetMap.Mapnik, options = providerTileOptions(noWrap = TRUE) ) %>%
-          fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
+  leaflet() %>%
+      addTiles() %>%
+      ## addProviderTiles(providers$OpenStreetMap.Mapnik, options = providerTileOptions(noWrap = TRUE) ) %>%
+      fitBounds(-74.079,4.46,-74.065, 4.823) ## la candelaria Bogota
      ##  ## medellin/test
   leafletProxy("map", data = x )  %>%
     addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
