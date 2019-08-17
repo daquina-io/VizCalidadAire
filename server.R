@@ -118,5 +118,5 @@ shinyServer(function(input, output) {
   })
 
   leafletProxy("map", data = x )  %>%
-      addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), opacity= 1.0, fillOpacity = 1.0, radius = 20, fillColor= ~color, color = ~color,  weight = 20, label = ~sensorName)
+      addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~sensorName, opacity= 1.0, fillOpacity = 1.0, radius = 20, fillColor= ~color, color = ~color,  weight = 20, label = ~as.character(as.integer(pm25)), labelOptions = labelOptions(noHide = TRUE, offset=c(0,20), textOnly = TRUE, direction = "top", style = list("color" = "white", "font-weight" = "bold")))
 })
