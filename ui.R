@@ -11,6 +11,7 @@ ui <- function(request) {
     absolutePanel(top = 5, right = 5,
                   h4("Mediciones Ciudadanas AQA"),
                   a("Acerca de este proyecto",  href="http://wiki.unloquer.org/personas/brolin/proyectos/agentes_calidad_aire")
+                  a("Acerca de las estaciones CanAirIO",  href="https://canair.io/")
                   )
   )
 }
