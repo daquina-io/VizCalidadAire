@@ -9,6 +9,8 @@ if(!require(leaflet)) {
 }
 if(!require(lubridate)) install.packages('lubridate')
 if(!require(influxdbr)) install.packages('influxdbr')
+if(!require(plotly)) install.packages('plotly')
+library("plotly")
 
 ## conexión remota
 host <- "gblabs.co"
@@ -117,5 +119,38 @@ shinyServer(function(input, output) {
   })
 
   leafletProxy("map", data = x )  %>%
-    addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
+      addCircles( ~as.numeric(lng), ~as.numeric(lat), popup = ~as.character(pm25), fillOpacity = 0.9, radius = 20, color = ~color,  weight = 20, label = ~sensorName)
+
+
+                                        # test radial
+output$radial <- renderPlotly({
+  ## ## leer de csv
+    points <- read_csv("~/Projects/unloquer/VizCalidadAire/data/Material_Particulado.csv")
+    points <- sample_n(points,60)
+  ## quita NA
+  points <- points[complete.cases(points), ]
+  points$date<- mdy_hms(points$date)
+  ## agrega escala ICA
+  points$ica <- sapply(points$pm25, function(x){
+      if(x <= 15 ) return("forestgreen")
+      if(x > 16 & x <= 30) return("gold")
+      if(x > 31 & x <= 50) return("darkred")
+      else return("purple")
   })
+
+  ## Visualizaciones
+### Serie de tiempo
+  ##plot(points$date, points$pm25)
+
+  ## plotly
+
+### area
+  p <- plot_ly(points, r = ~pm25, t = ~date, type =  "area", color=~ica, colors = ~ica)
+  layout(p, radialaxis = list(ticksuffix = "ug/m3"),  orientation = 270)
+
+
+})
+
+})
+
+##

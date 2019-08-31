@@ -11,31 +11,31 @@ require(influxdbr)
 
 
 ## ## leer de csv
-points <- read_csv("~/Projects/daquina/VizCalidadAire/data/Material_Particulado.csv")
+points <- read_csv("~/Projects/unloquer/VizCalidadAire/data/Material_Particulado.csv")
 ## quita NA
 points <- points[complete.cases(points), ]
-points$time<- mdy_hms(points$time)
+points$date<- mdy_hms(points$date)
 ## agrega escala ICA
-points$ica <- sapply(points$mean_pm25, function(x){
-  if(x <= 15 ) return("green")
-  if(x > 16 & x <= 30) return("yellow")
-  if(x > 31 & x <= 50) return("red")
+points$ica <- sapply(points$pm25, function(x){
+  if(x <= 15 ) return("forestgreen")
+  if(x > 16 & x <= 30) return("gold")
+  if(x > 31 & x <= 50) return("darkred")
   else return("purple")
   })
 
 ## Visualizaciones
 ### Serie de tiempo
-plot(points$time, points$mean_pm25)
+plot(points$date, points$pm25)
 
 ## plotly
 
 ### area
-p <- plot_ly(points, r = ~mean_pm25, t = ~time) %>% add_area(color = ~ica)
+p <- plot_ly(points, r = ~pm25, t = ~date, type = "area", mode = "points",  colors = ~ica, color = ~ica)
 layout(p, radialaxis = list(ticksuffix = "ug/m3"), orientation = 270)
 
-### scatter
-p <- plot_ly(points, r = ~mean_pm25, t = ~time, color = ~ica, alpha = 0.5, type = "scatter")
-layout(p, radialaxis = list(ticksuffix = "ug/m3"))
+### area
+p <- plot_ly(points, r = ~pm25, t = ~time, type = "scatter") %>% add_area(color = ~ica, alpha = 0.5)
+layout(p, radialaxis = list(ticksuffix = "ug/m3"), orientation = 270)
 
 ### To Audio meters X42
 points <- read_csv("~/Data/aire/AQAdata/volker0004.csv")
