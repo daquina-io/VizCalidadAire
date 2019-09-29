@@ -12,10 +12,10 @@ if(!require(influxdbr)) install.packages('influxdbr')
 
 ## conexión remota
 host <- "gblabs.co"
-        ## "aqa.unloquer.org"
+        ##"aqa.unloquer.org"
         ## "aireciudadano.servehttp.com"
 db <-   "canairio"
-        ## "aqa"
+        ##"aqa"
         ## "ENVdataDB"
 con <- influx_connection(scheme = c("http", "https"), host = host,port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
@@ -110,10 +110,10 @@ shinyServer(function(input, output) {
 
   output$map <- renderLeaflet({
       leaflet() %>%
-          ## addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>%
+          ##addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>%
           addProviderTiles(providers$Stamen.Terrain, options = providerTileOptions(noWrap = TRUE) ) %>%
           fitBounds(-74.079,4.46,-74.065, 4.823) ## Bogotá
-          ## fitBounds(-75.5, 6.16, -75.57, 6.35) ## Medellin
+          ##fitBounds(-75.5, 6.16, -75.57, 6.35) ## Medellin
   })
 
   leafletProxy("map", data = x )  %>%
