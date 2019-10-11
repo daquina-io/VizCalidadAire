@@ -11,11 +11,11 @@ if(!require(lubridate)) install.packages('lubridate')
 if(!require(influxdbr)) install.packages('influxdbr')
 
 ## conexión remota
-host <- "gblabs.co"
-        ##"aqa.unloquer.org"
+host <- ## "gblabs.co"
+        "aqa.unloquer.org"
         ## "aireciudadano.servehttp.com"
-db <-   "canairio"
-        ##"aqa"
+db <-   ## "canairio"
+        "aqa"
         ## "ENVdataDB"
 con <- influx_connection(scheme = c("http", "https"), host = host,port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
 
@@ -110,14 +110,14 @@ shinyServer(function(input, output) {
 
   output$map <- renderLeaflet({
       leaflet() %>%
-          ##addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>%
-          addProviderTiles(providers$Stamen.Terrain, options = providerTileOptions(noWrap = TRUE) ) %>%
-          fitBounds(-74.079,4.46,-74.065, 4.823) ## Bogotá
-          ##fitBounds(-75.5, 6.16, -75.57, 6.35) ## Medellin
+          addProviderTiles(providers$CartoDB.DarkMatter, options = providerTileOptions(noWrap = TRUE) ) %>%
+          ##addProviderTiles(providers$Stamen.Terrain, options = providerTileOptions(noWrap = TRUE) ) %>%
+          ##fitBounds(-74.079,4.46,-74.065, 4.823) ## Bogotá
+          fitBounds(-75.5, 6.16, -75.57, 6.35) ## Medellin
   })
 
   leafletProxy("map", data = x )  %>%
       addCircles( ~as.numeric(lng), ~as.numeric(lat),
                  popup = ~popup_content(query(sensores_ts(db, x$sensorName)), x$sensorName, x$link),
-                 opacity= 0.9, fillOpacity = 0.9, radius = 30, fillColor= ~color, color = ~color,  weight = 30, label = ~as.character(as.integer(pm25)), labelOptions = labelOptions(noHide = TRUE, offset=c(0,22), textOnly = TRUE, direction = "top", style = list("color" = "white", "font-weight" = "bold", "font-size" = "12px")))
+                 opacity= 0.9, fillOpacity = 0.9, radius = 20, fillColor= ~color, color = ~color,  weight = 20, label = ~as.character(as.integer(pm25)), labelOptions = labelOptions(noHide = TRUE, offset=c(0,22), textOnly = TRUE, direction = "top", style = list("color" = "white", "font-weight" = "bold", "font-size" = "12px")))
 })
