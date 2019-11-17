@@ -53,18 +53,10 @@ popup_content <- function(query_str, sensorname, link = "ada") {
     )
 }
 
-data <- influx_query(con, db = db, query = query(sensores(db,measurements),"1h"),timestamp_format = c("n", "u", "ms", "s", "m", "h"))
-
-x <- as.data.frame(matrix(unlist(data), ncol=3, byrow = TRUE))
-
-## names
-colnames(x) <- c("pm25","lat","lng")
-
-## add sensor name from data structure
-x$sensorName <-  unique(names(data[[1]]))
+data <- influx_query(con, db = db, query = query(sensores(db,measurements),"1h"),timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = FALSE)[[1]]
 
 ## add ICApm25 colors
-x$color <- (lapply(x$pm25, function(x)(
+data$color <- (lapply(data$pm25, function(x)(
   ifelse(x < 12 , "green",
   ifelse(x < 35 && x >= 12 , "gold",
   ifelse( x < 55 && x >= 35, "orange",
@@ -72,29 +64,26 @@ x$color <- (lapply(x$pm25, function(x)(
   ifelse( x < 250 && x >= 150, "purple",
          "maroon"))))))) %>% enframe %>% unnest)$value
 
-if(host == "gblabs.co") {
-    ubicacion <- read_tsv("./canairio_sensors_mod.csv")
-    x <- x %>% left_join(ubicacion, by="sensorName")
-    x <- tibble(
-        pm25 = x$pm25,
-        sensorName = x$sensorName,
-        color = x$color,
-        lat = x$lat.y,
-        lng = x$lng.y,
-        link = x$link
-    )
-} else {
-    x <- tibble(
-        pm25 = x$pm25,
-        sensorName = x$sensorName,
-        color = x$color,
-        lat = x$lat,
-        lng = x$lng
-    )
-}
-
-x <- unique(x)
-x <- x[!is.na(x$lng),]
+## if(host == "gblabs.co") {
+##     ubicacion <- read_tsv("./canairio_sensors_mod.csv")
+##     x <- x %>% left_join(ubicacion, by="sensorName")
+##     x <- tibble(
+##         pm25 = x$pm25,
+##         sensorName = x$sensorName,
+##         color = x$color,
+##         lat = x$lat.y,
+##         lng = x$lng.y,
+##         link = x$link
+##     )
+## } else {
+##     x <- tibble(
+##         pm25 = x$pm25,
+##         sensorName = x$sensorName,
+##         color = x$color,
+##         lat = x$lat,
+##         lng = x$lng
+##     )
+## }
 
 ## No funciona encuadre
 encuadre <- function(servidor) {
@@ -104,9 +93,9 @@ encuadre <- function(servidor) {
 
 ## write_tsv(x,"/tmp/aireciudadano.txt")
 shinyServer(function(input, output) {
-  data <- reactive({
-   #as.numeric(input$integer)
-  })
+  ## data <- reactive({
+  ##  #as.numeric(input$integer)
+  ## })
 
   output$map <- renderLeaflet({
       leaflet() %>%
@@ -116,8 +105,8 @@ shinyServer(function(input, output) {
           fitBounds(-75.5, 6.16, -75.57, 6.35) ## Medellin
   })
 
-  leafletProxy("map", data = x )  %>%
+  leafletProxy("map", data = data )  %>%
       addCircles( ~as.numeric(lng), ~as.numeric(lat),
-                 popup = ~popup_content(query(sensores_ts(db, x$sensorName)), x$sensorName, x$link),
+                 popup = ~popup_content(query(sensores_ts(db, data$series_names)), data$series_names, data$link),
                  opacity= 0.9, fillOpacity = 0.9, radius = 20, fillColor= ~color, color = ~color,  weight = 20, label = ~as.character(as.integer(pm25)), labelOptions = labelOptions(noHide = TRUE, offset=c(0,22), textOnly = TRUE, direction = "top", style = list("color" = "white", "font-weight" = "bold", "font-size" = "12px")))
 })
