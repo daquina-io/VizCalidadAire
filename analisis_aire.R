@@ -1,5 +1,9 @@
 library(plotly)
 library(tidyverse)
+library(jsonlite)
+library(httr)
+library(leaflet)
+library(lubridate)
 
 Animals <- c("giraffes", "orangutans", "monkeys")
 SF_Zoo <- c(20, 14, 23)
@@ -36,3 +40,45 @@ fig <- fig %>% add_trace(y = ~((emission/total)*100), name = 'Ref Emision Centro
 fig <- fig %>% layout(yaxis = list(title = 'Porcentaje'), barmode = 'stack')
 
 fig
+
+## add ICApm25 colors
+set_color <- function(x) {
+    ifelse(x >0 & x < 13 , "green",
+    ifelse(x > 13 & x <= 25 , "yellow",
+    ifelse( x > 25 & x <= 35, "orange",
+    ifelse( x > 35 & x <= 55, "red",
+    ifelse( x > 55 & x <= 100, "purple",
+    ifelse( x > 100, "maroon",
+           "grey"))))))
+}
+
+data_pm25 <- fromJSON("https://api.openaq.org/v1/measurements?city=Medellin&parameter=pm25")
+pm25 <- tibble(
+    location = data_pm25$results$location,
+    date_utc = ymd_hms(data$results$date$local),
+    value = data_pm25$results$value,
+    color=set_color((data_pm25$results$value)),
+    lat = data_pm25$results$coordinates$latitude,
+    lng = data_pm25$results$coordinates$longitude
+)
+
+data_locations <- fromJSON("https://api.openaq.org/v1/locations?country[]=CO")
+locations <- tibble(
+    id = data_locations$results$id,
+    city = data_locations$results$city,
+    location = data_locations$results$location,
+    sourceName = data_locations$results$sourceName,
+    lat = data_locations$results$coordinates$latitude,
+    lng = data_locations$results$coordinates$longitude
+)
+
+leaflet(locations) %>%
+    addTiles() %>%
+    addCircleMarkers(~lng, ~lat, popup = ~location)
+
+leaflet(pm25) %>%
+    addTiles() %>%
+    addCircleMarkers(~lng, ~lat, popup = ~location, color = ~color)
+
+
+
