@@ -13,4 +13,7 @@
 "glabs.co"	"PM2.5_BOG_KEN_HumedalLaVaca_E01"	"4.628958"	"-74.163075"	"http://gblabs.co:3000/d/xkRh8b0Wz/canairio_bogota_kennedy_humedal-la-vaca_e01?orgId=1&refresh=30s&from=now-1h&to=now"
 "glabs.co"	"PM2.5_CUN_SUA_Satelite_E03"	"4.5799029"	"-74.2219874"	"http://gblabs.co:3000/d/s2l53IrZk/canairio_suacha_satelite?orgId=1&refresh=30s&from=now-1h&to=now"
 "glabs.co"	"PM2.5_BOG_SUBA_Mirandela_E01"	"4.7654045"	"-74.0454381"	"http://gblabs.co:3000/d/lF0QqvrZz/canairio_bogota_suba_mirandela?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_USA_Pradera Norte_E01"	"4.7445334"	"-74.0335703"	"http://gblabs.co:3000/d/otSC_8rWk/canairio_bogota_usaquen_pradera-norte?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_SUBA_CC_E01"	"4.728861"	"-74.066048"	"http://gblabs.co:3000/d/Hjc56cqWk/canairio_bogota_suba_colinacampestre?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_USA_SanPatricio"	"4.694394"	"-74.047806"	"http://gblabs.co:3000/d/bNiyWKCWk/canairio_usaquen_san-patricio?orgId=1&refresh=30s&from=now-1h&to=now"
 
