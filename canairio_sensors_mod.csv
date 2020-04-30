@@ -1,21 +1,21 @@
-server	sensorName	lat	lng	link
-glabs.co	PM2.5_BOG_CBO_Mexico_E01	4.552430	-74.136596	http://gblabs.co:3000/d/SHCDVPRgz/canairio_bogota_ciudad-bolivar_barrio-mexico_e01?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_CBO_MochueloBajo_E01	4.507773	-74.146959	http://gblabs.co:3000/d/V7d6uYgRk/canairio_bogota_ciudad-bolivar_barrio-mochuelo_e01?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_CHA_Virrey_E01	4.674292	-74.055789	http://gblabs.co:3000/d/BEndcPiRz/canairio_bogota_chapinero-parque-el-virrey_jc?orgId=1&from=now-1h&to=now&refresh=30s
-glabs.co	PM2.5_BOG_ENG_SML_E05	4.693667	-74.093837	http://gblabs.co:3000/d/YB7jNEggk/canairio_bogota_engativa_barrio-santa-maria-del-lago_e01?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_ENG_Tibabuyes_E08	4.720281	-74.101201	http://gblabs.co:3000/d/LGLAyEkRk/canairio_bogota_engativa_humedal-juan-amarillo-tibabuyes_agrosolidaria?orgId=1&refresh=30s
-glabs.co	PM2.5_BOG_USM_VirreySolis_E01	4.502741	-74.114360	http://gblabs.co:3000/d/5xwTwYggz/canairio_bogota_usme_barrio-virrey-solis_e01?orgId=1&from=now-1h&to=now&fullscreen&edit&panelId=2&refresh=30s
-glabs.co	Pm2.5_BOG-KEN_Alqueria_E00	4.6020068	-74.1376746	http://gblabs.co:3000/d/BwdwlbdWz/canairio_bogota_kennedy_alqueria?orgId=1&from=now-1h&to=now&refresh=30s
-glabs.co	PM2.5_BOG_PAR_Pradera_E01	4.624435	-74.12324	http://gblabs.co:3000/d/VWVt4KKZk/canairio_bogota_puente-aranda_pradera_arttesano?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_CBO_ColegioCompartir_E03	4.549149	-74.145525	http://gblabs.co:3000/d/4CGMFEHWz/canairio_bogota_ciudad-bolivar_barrio-colegio-compartir?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_CBO_Estancia_E03	4.594933	-74.172857	http://gblabs.co:3000/d/LBCRNPgRk/canairio_bogota_ciudad-bolivar_estancia_manuel?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM25_PuenteAranda_Ponderosa	4.60913	-74.11945	http://gblabs.co:3000/d/t0o2CqtWk/canairio_bogota_puente-aranda_ponderosa?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_KEN_HumedalLaVaca_E01	4.628958	-74.163075	http://gblabs.co:3000/d/xkRh8b0Wz/canairio_bogota_kennedy_humedal-la-vaca_e01?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_CUN_SUA_Satelite_E03	4.5799029	-74.2219874	http://gblabs.co:3000/d/s2l53IrZk/canairio_suacha_satelite?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_SUBA_Mirandela_E01	4.7654045	-74.0454381	http://gblabs.co:3000/d/lF0QqvrZz/canairio_bogota_suba_mirandela?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_CUN_SUA_ColegioJCT_E01	4.58500	-74.19027	http://gblabs.co:3000/d/X4ZKh8_Zz/canairio_suacha_colegio-julio-cesar-turbay?from=now-1h&to=now
-glabs.co	PM2.5_CUN_SUA_Altico_E02	4.57242	-74.22259	http://gblabs.co:3000/d/ZjAiYU_Zz/canairio_suacha_altico-de-soacha?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co	PM2.5_BOG_KEN_Humedal Techo_E03	4.648315	-74.143754	http://gblabs.co:3000/d/NZByQouZk/canairio_bogota_kennedy_humedal-techo?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co  PM2.5_CUN_SUA_ColegioJCT_E01  4.58500  -74.19027  http://gblabs.co:3000/d/X4ZKh8_Zz/canairio_suacha_colegio-julio-cesar-turbay?from=now-1h&to=now
-glabs.co  PM2.5_CUN_SUA_Altico_E02  4.57242  -74.22259  http://gblabs.co:3000/d/ZjAiYU_Zz/canairio_suacha_altico-de-soacha?orgId=1&refresh=30s&from=now-1h&to=now
-glabs.co  PM2.5_BOG_KEN_Humedal Techo_E03  4.648315  -74.143754  http://gblabs.co:3000/d/NZByQouZk/canairio_bogota_kennedy_humedal-techo?orgId=1&refresh=30s&from=now-1h&to=now
+"server"	"sensorName"	"lat"	"lng"	"link"
+"glabs.co"	"PM2.5_BOG_CBO_Mexico_E01"	"4.552430"	"-74.136596"	"http://gblabs.co:3000/d/SHCDVPRgz/canairio_bogota_ciudad-bolivar_barrio-mexico_e01?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_CBO_MochueloBajo_E01"	"4.507773"	"-74.146959"	"http://gblabs.co:3000/d/V7d6uYgRk/canairio_bogota_ciudad-bolivar_barrio-mochuelo_e01?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_CHA_Virrey_E01"	"4.674292"	"-74.055789"	"http://gblabs.co:3000/d/BEndcPiRz/canairio_bogota_chapinero-parque-el-virrey_jc?orgId=1&from=now-1h&to=now&refresh=30s"
+"glabs.co"	"PM2.5_BOG_ENG_SML_E05"	"4.693667"	"-74.093837"	"http://gblabs.co:3000/d/YB7jNEggk/canairio_bogota_engativa_barrio-santa-maria-del-lago_e01?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_ENG_Tibabuyes_E08"	"4.720281"	"-74.101201"	"http://gblabs.co:3000/d/LGLAyEkRk/canairio_bogota_engativa_humedal-juan-amarillo-tibabuyes_agrosolidaria?orgId=1&refresh=30s"
+"glabs.co"	"PM2.5_BOG_USM_VirreySolis_E01"	"4.502741"	"-74.114360"	"http://gblabs.co:3000/d/5xwTwYggz/canairio_bogota_usme_barrio-virrey-solis_e01?orgId=1&from=now-1h&to=now&fullscreen&edit&panelId=2&refresh=30s"
+"glabs.co"	"Pm2.5_BOG-KEN_Alqueria_E00"	"4.6020068"	"-74.1376746"	"http://gblabs.co:3000/d/BwdwlbdWz/canairio_bogota_kennedy_alqueria?orgId=1&from=now-1h&to=now&refresh=30s"
+"glabs.co"	"PM2.5_BOG_PAR_Pradera_E01"	"4.624435"	"-74.12324"	"http://gblabs.co:3000/d/VWVt4KKZk/canairio_bogota_puente-aranda_pradera_arttesano?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_CBO_ColegioCompartir_E03"	"4.549149"	"-74.145525"	"http://gblabs.co:3000/d/4CGMFEHWz/canairio_bogota_ciudad-bolivar_barrio-colegio-compartir?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_CBO_Estancia_E03"	"4.594933"	"-74.172857"	"http://gblabs.co:3000/d/LBCRNPgRk/canairio_bogota_ciudad-bolivar_estancia_manuel?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM25_PuenteAranda_Ponderosa"	"4.60913"	"-74.11945"	"http://gblabs.co:3000/d/t0o2CqtWk/canairio_bogota_puente-aranda_ponderosa?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_KEN_HumedalLaVaca_E01"	"4.628958"	"-74.163075"	"http://gblabs.co:3000/d/xkRh8b0Wz/canairio_bogota_kennedy_humedal-la-vaca_e01?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_CUN_SUA_Satelite_E03"	"4.5799029"	"-74.2219874"	"http://gblabs.co:3000/d/s2l53IrZk/canairio_suacha_satelite?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_SUBA_Mirandela_E01"	"4.7654045"	"-74.0454381"	"http://gblabs.co:3000/d/lF0QqvrZz/canairio_bogota_suba_mirandela?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_CUN_SUA_ColegioJCT_E01"	"4.58500"	"-74.19027"	"http://gblabs.co:3000/d/X4ZKh8_Zz/canairio_suacha_colegio-julio-cesar-turbay?from=now-1h&to=now"
+"glabs.co"	"PM2.5_CUN_SUA_Altico_E02"	"4.57242"	"-74.22259"	"http://gblabs.co:3000/d/ZjAiYU_Zz/canairio_suacha_altico-de-soacha?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_KEN_Humedal Techo_E03"	"4.648315"	"-74.143754"	"http://gblabs.co:3000/d/NZByQouZk/canairio_bogota_kennedy_humedal-techo?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_CUN_SUA_ColegioJCT_E01"	"4.58500"	"-74.19027"	"http://gblabs.co:3000/d/X4ZKh8_Zz/canairio_suacha_colegio-julio-cesar-turbay?from=now-1h&to=now"
+"glabs.co       "	"PM2.5_CUN_SUA_Altico_E02"	"4.57242"	"-74.22259"	"http://gblabs.co:3000/d/ZjAiYU_Zz/canairio_suacha_altico-de-soacha?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_KEN_Humedal Techo_E03"	"4.648315"	"-74.143754"	"http://gblabs.co:3000/d/NZByQouZk/canairio_bogota_kennedy_humedal-techo?orgId=1&refresh=30s&from=now-1h&to=now"
