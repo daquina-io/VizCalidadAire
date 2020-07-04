@@ -49,7 +49,7 @@ popup_content <- function(query_str, sensorname, link = "ada") {
     }
     paste0(
         "Click para ver mediciones de la última<br/>",
-        sprintf("hora del sensor <b><a target='_blank' href='http://%s:8888/sources/2/chronograf/data-explorer?query=%s'>%s</a></b>",host, query_str, sensorname)
+        sprintf("hora del sensor <b><a target='_blank' href='http://%s:8888/sources/1/chronograf/data-explorer?query=%s'>%s</a></b>",host, query_str, sensorname)
     )
 }
 
