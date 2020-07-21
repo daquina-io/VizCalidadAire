@@ -23,3 +23,5 @@ glabs.co	PM2.5_BOG_SUBA_CC_E01	4.728861	-74.066048	1	http://gblabs.co:3000/d/Hjc
 glabs.co	PM2.5_BOG_USA_SanPatricio	4.694394	-74.047806	1	http://gblabs.co:3000/d/bNiyWKCWk/canairio_usaquen_san-patricio?orgId=1&refresh=30s&from=now-1h&to=now
 glabs.co	PM2.5_ABCAD7_PAN	4.57612	-74.127965	*1.3009117+1.0650456	http://gblabs.co:3000/d/psODWT7Mz/canairio_bogota_tunjuelito_tunal_panasonic?orgId=1&from=now-1h&to=now&refresh=30s
 glabs.co	PM2.5_BOG_AN_EBC6_PAN	4.581215	-74.096019	*1.3009117+1.0650456	http://gblabs.co:3000/d/ElGoWonGz/canairio_bogota_antonio-narino_ciudad-jardin_panasonic?orgId=1&from=now-1h&to=now&refresh=30s
+glabs.co	PM2.5_BOG_SFE_LaMacarena_E01	4.6150174	-74.066806	1	http://gblabs.co:3000/d/-o7C9X7Mz/canairio_bogota_santa-fe_la-macarena?orgId=1&refresh=30s&from=now-1h&to=now
+glabs.co	PM2.5_BOG_CHA_MariaCristina_E02	4.645505	-74.054638	1	http://gblabs.co:3000/d/HW41k97Mk/canairio_bogota_chapinero_maria-cristina?orgId=1&refresh=30s&from=now-1h&to=now
