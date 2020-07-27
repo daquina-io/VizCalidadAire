@@ -68,7 +68,7 @@ if(host == "gblabs.co") {
     ubicacion <- read_tsv("./canairio_sensors_mod.csv")
     data <- data %>% left_join(ubicacion, by=c("series_names"="sensorName"))
     data <- tibble(
-        pm25 = data$pm25,
+        pm25 = data$pm25*data$pendiente + data$intercepto,
         series_names = data$series_names,
         color = data$color,
         lat = data$lat.y,
