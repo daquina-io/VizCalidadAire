@@ -26,5 +26,5 @@
 "glabs.co"	"PM2.5_BOG_SFE_LaMacarena_E01"	"4.6150174"	"-74.066806"	1	0	"http://gblabs.co:3000/d/-o7C9X7Mz/canairio_bogota_santa-fe_la-macarena?orgId=1&refresh=30s&from=now-1h&to=now"
 "glabs.co"	"PM2.5_ENG_HumedalJaboque_E03"	"4.716198"	"-74.133534"	1	0	"http://gblabs.co:3000/d/QS15-mtWz/canairio_bogota_engativa_humedal-jaboque_e01?orgId=1&refresh=30s&from=now-1h&to=now"
 "glabs.co"	"PM2.5_BOG_TEU_SanLuis_E01"	"4.647676"	"-74.071549"	1	0	"http://gblabs.co:3000/d/2SZaWrWGz/canairio_bog_teusaquillo_san-luis?orgId=1&refresh=30s&from=now-1h&to=now"
-"glabs.co"  "PM2.5_BOG_FON_Hayuelos_E01"  "4.661486"  "-74.130199"  1  0  "http://gblabs.co:3000/d/BCjqFX4Mz/canairio_bogota_fontibon_hayuelos?orgId=1&refresh=30s&from=now-1h&to=now"
+"glabs.co"	"PM2.5_BOG_FON_Hayuelos_E01"	"4.661486"	"-74.130199"	1	0	"http://gblabs.co:3000/d/BCjqFX4Mz/canairio_bogota_fontibon_hayuelos?orgId=1&refresh=30s&from=now-1h&to=now"
 "influxdb.canair.io"	"PM2.5_BOG_CHA_MariaCristina_E02"	"4.645505"	"-74.054638"	1	0	"http://influxdb.canair.io:8000/d/mncSTCVMz/canairio_bogota_chapinero_maria-cristina?orgId=1&refresh=30s&from=now-1h&to=now"
