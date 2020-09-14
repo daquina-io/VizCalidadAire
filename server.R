@@ -10,18 +10,16 @@ if(!require(leaflet)) {
 if(!require(lubridate)) install.packages('lubridate')
 if(!require(influxdbr)) install.packages('influxdbr')
 
-## conexión remota
-host <- "gblabs.co"
-        ##"aqa.unloquer.org"
-        ## "aireciudadano.servehttp.com"
-db <-   "canairio"
-        ##"aqa"
-        ## "ENVdataDB"
-con <- influx_connection(scheme = c("http", "https"), host = host,port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
+## Sensor meta data
+sensors_data <- read_tsv("./canairio_sensors_mod.csv")
 
-measurements <- unlist( show_measurements(con = con,
-                                          db = db
-                                          ))
+## conexión remota, implementación para consultar múltiples servidores
+hosts <- unique(sensors_data$server)
+db <-   "canairio"
+
+cons <- map(hosts, function(h) {
+  influx_connection(scheme = c("http", "https"), host = h, port = 8086, group = NULL, verbose = FALSE, config_file = "~/.influxdb.cnf")
+}) %>% set_names(hosts)
 
 sensores <- function(db, measurements) {
     paste0("\"",db,"\"",".autogen.","\"",measurements,"\"",collapse=",")
@@ -41,50 +39,39 @@ query <- function(snsrs, type = "ts") {
 }
 
 popup_content <- function(query_str, sensorname, link = "ada") {
-    if(host == "gblabs.co") {
-        return (paste0(
+  return (paste0(
             "Click para ver mediciones de la última<br/>",
             sprintf("hora del sensor <b><a target='_blank' href='%s'>%s</a></b>",link, sensorname))
-            )
-    }
-    paste0(
-        "Click para ver mediciones de la última<br/>",
-        sprintf("hora del sensor <b><a target='_blank' href='http://%s:8888/sources/1/chronograf/data-explorer?query=%s'>%s</a></b>",host, query_str, sensorname)
-    )
+          )
 }
 
-data <- influx_query(con, db = db, query = query(sensores(db,measurements),"1h"),timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = FALSE)[[1]]
+datas <- map(hosts, function(h){
+  influx_query(
+    cons[[h]],
+    db = db,
+    query = query(sensores(db, sensors_data[sensors_data$server == h,"sensorName"][[1]]),"1h"),
+    timestamp_format = c("n", "u", "ms", "s", "m", "h"),
+    return_xts = FALSE)[[1]]
+}) %>% enframe %>% unnest(cols = c(value))
 
 ## add ICApm25 colors
-data$color <- (lapply(data$pm25, function(x)(
+datas$color <- (lapply(datas$pm25, function(x)(
   ifelse(x < 12 , "green",
   ifelse(x < 35 && x >= 12 , "gold",
   ifelse( x < 55 && x >= 35, "orange",
   ifelse( x < 150 && x >= 55, "red",
   ifelse( x < 250 && x >= 150, "purple",
-         "maroon"))))))) %>% enframe %>% unnest)$value
+         "maroon"))))))) %>% enframe %>% unnest(cols = c(value)))$value
 
-if(host == "gblabs.co") {
-    ubicacion <- read_tsv("./canairio_sensors_mod.csv")
-    data <- data %>% left_join(ubicacion, by=c("series_names"="sensorName"))
-    data <- tibble(
-        pm25 = data$pm25*data$pendiente + data$intercepto,
-        series_names = data$series_names,
-        color = data$color,
-        lat = data$lat.y,
-        lng = data$lng.y,
-        link = data$link
-    )
-}
-## else {
-##     x <- tibble(
-##         pm25 = x$pm25,
-##         sensorName = x$sensorName,
-##         color = x$color,
-##         lat = x$lat,
-##         lng = x$lng
-##     )
-## }
+datas <- datas %>% left_join(sensors_data, by=c("series_names"="sensorName"))
+datas <- tibble(
+  pm25 = datas$pm25*datas$pendiente + datas$intercepto,
+  series_names = datas$series_names,
+  color = datas$color,
+  lat = datas$lat.y,
+  lng = datas$lng.y,
+  link = datas$link
+)
 
 ## No funciona encuadre
 encuadre <- function(servidor) {
@@ -106,8 +93,8 @@ shinyServer(function(input, output) {
           ## fitBounds(-75.5, 6.16, -75.57, 6.35) ## Medellin
   })
 
-  leafletProxy("map", data = data )  %>%
+  leafletProxy("map", data = datas )  %>%
       addCircles( ~as.numeric(lng), ~as.numeric(lat),
-                 popup = ~popup_content(query(sensores_ts(db, data$series_names)), data$series_names, data$link),
+                 popup = ~popup_content(query(sensores_ts(db, datas$series_names)), datas$series_names, datas$link),
                  opacity= 0.9, fillOpacity = 0.9, radius = 30, fillColor= ~color, color = ~color,  weight = 30, label = ~as.character(as.integer(pm25)), labelOptions = labelOptions(noHide = TRUE, offset=c(0,22), textOnly = TRUE, direction = "top", style = list("color" = "white", "font-weight" = "bold", "font-size" = "12px")))
 })
