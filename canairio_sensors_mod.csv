@@ -32,7 +32,7 @@
 "influxdb.canair.io"	"PM2.5_BOG_TEU_Salitre_E02"	"4.644838"	"-74.101465"	1	0	"http://influxdb.canair.io:8000/d/7zpYaitWr/canairio_bogota_teusaquillo_salitre?orgId=1&refresh=30s&from=now-1h&to=now"
 "influxdb.canair.io"	"PM2.5_BOG_TEU_SanLuis_E01"	"4.647676"	"-74.071549"	1	0	"http://influxdb.canair.io:8000/d/2SZaWrWGz/canairio_bog_teusaquillo_san-luis?orgId=1&refresh=30s&from=now-1h&to=now"
 "influxdb.canair.io"	"PM2.5_BOG_FON_Hayuelos_E01"	"4.661486"	"-74.130199"	1	0	"http://influxdb.canair.io:8000/d/xCIDyuVGz/canairio_bogota_fontibon_hayuelos?orgId=1&refresh=30s&from=now-1h&to=now"
-"influxdb.canair.io"	"PM2.5_BOG_USA_Pradera Norte_E01"	"4.7445334"	"-74.0335703"	1	0	"http://influxdb.canair.io:8000/d/VWVt4KKZk/canairio_bogota_puente-aranda_pradera_panasonic?orgId=1&refresh=30s&from=now-1h&to=now"
+"influxdb.canair.io"	"PM2.5_BOG_PAR_Pradera_E01" "4.7445334" "-74.0335703" 1 0 "http://influxdb.canair.io:8000/d/VWVt4KKZk/canairio_bogota_puente-aranda_pradera?orgId=1&from=now-1h&to=now&refresh=30s"
 "influxdb.canair.io"	"PM2.5_BOG_CAN_LasAguas_E01"	"4.601367"	"-74.067365"	1	0	"http://influxdb.canair.io:8000/d/aSe20B9Wk/canairio_bogota_candelaria_las-aguas?orgId=1&refresh=30s&from=now-1h&to=now"
 "influxdb.canair.io"	"PM2.5_BOG_CHA_Rosales_E03" "4.650747"  "-74.053751"  1 0 "http://influxdb.canair.io:8000/d/lF0QqVRZz/canairio_bogota_chapinero_rosales?orgId=1&refresh=30s&from=now-1h&to=now"
 "influxdb.canair.io"	"PM2.5_BOG_AN_CJardin_E02" "4.579875"  "-74.094090"  1 0 "http://influxdb.canair.io:8000/d/2SZaWRWGz/canairio_bog_antonio-narino_ciudad-jardin_e02?orgId=1&refresh=30s&from=now-1h&to=now"
