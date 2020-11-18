@@ -56,4 +56,4 @@
 "influxdb.canair.io"	"PM2.5_PERU_LIMA_Ate_E03"	"-12.024744"	"-76.931943"	1	0	"http://influxdb.canair.io:8000/d/QS15-meWF/canairio_peru_lima_ate?orgId=1&refresh=30s&from=now-1h&to=now"
 "influxdb.canair.io"	"PM2.5_PERU_LIMA_SanJuanLurigancho_E04"	"-12.024973"	"-76.991961"	1	0	"http://influxdb.canair.io:8000/d/QS15-mtWP/canairio_peru_lima_san-juan-de-lurigancho?orgId=1&refresh=30s&from=now-1h&to=now"
 "influxdb.canair.io"	"PM2.5_PERU_LIMA_Los_Olivos_E05"	"-12.009784"	"-77.069365"	1	0	"http://influxdb.canair.io:8000/d/QS15-mtrF/canairio_peru_lima_los-olivos?orgId=1&refresh=30s&from=now-1h&to=now"
-"influxdb.canair.io"	"CanAirIO_USA_94521"	"37.970309"	"-121.989148" "1.5098"  "2.6809"  "http://influxdb.canair.io:8000/d/YB7jNeggk/canairio_usa_94521?orgId=1&refresh=30s&from=now-1h&to=now"
+"influxdb.canair.io"	"CanAirIO_USA_94521"	"37.970309"	"-121.989148"	"1.5098"	"2.6809"	"http://influxdb.canair.io:8000/d/YB7jNeggk/canairio_usa_94521?orgId=1&refresh=30s&from=now-1h&to=now"
