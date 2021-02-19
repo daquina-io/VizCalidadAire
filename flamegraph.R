@@ -78,19 +78,6 @@ o7 <- list(c("valle"   ,"med","laLadera", lad))
 o8<- list(c("staElena","staElena","staElena", se))
 o9 <- list(c("valle"   ,"med","calazans", la80))
 #o10 <- list(c("valle"  ,"med","prad", c3p))
-x<- cbind(o1,o2,o3,o4,o5,o6,o7,o8,o9)
-#x<-as.list(x)
-x$stacks <- x
-x$counts <- as.integer(data$pm25)
+x$stacks <- cbind(o1,o2,o3,o4,o5,o6,o7,o8,o9)
 flameGraph(x)
 
-
-x$counts <- c(10,15)
-boli <- paste0("boliv_", as.character(x$counts[1]))
-o1 <- list(c("valle","med","belen", boli))
-o2 <- list(c("valle","med","conquista", "parq 15" ))
-x<- cbind(o1,o2)
-x$counts <- c(10,15)
-x$stacks <- x
-flameGraph(x)
-x
