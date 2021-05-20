@@ -14,7 +14,8 @@ if(!require(influxdbr)) install.packages('influxdbr')
 sensors_data <- read_tsv("./canairio_sensors_mod.csv")
 
 ## conexión remota, implementación para consultar múltiples servidores
-hosts <- unique(sensors_data$server)
+## hosts <- unique(sensors_data$server)
+hosts <- "influxdb.canair.io"
 db <-   "canairio"
 
 cons <- map(hosts, function(h) {
