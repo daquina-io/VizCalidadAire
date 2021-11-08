@@ -2,11 +2,7 @@ rm(list = ls())
 
 if (!require(tidyverse)) install.packages("tidyverse")
 if (!require(shiny)) install.packages("shiny")
-if (!require(leaflet)) {
-  devtools::install_github("rstudio/leaflet")
-  ## devtools::install_github("rstudio/leaflet.providers")
-  ## devtools::install_github("bhaskarvk/leaflet.extras")
-}
+if (!require(leaflet)) devtools::install_github("rstudio/leaflet")
 if (!require(lubridate)) install.packages("lubridate")
 if (!require(influxdbr)) install.packages("influxdbr")
 if (!require(geohashTools)) install.packages("geohashTools")
