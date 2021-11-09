@@ -60,9 +60,7 @@ popup_content <- function(query_str, sensorname, link = "ada") {
 data <- influx_query(con, db = db, query = query_n, timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = FALSE)[[1]]
 ## data_stas <- influx_query(con, db = db, query = query_stas, timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = FALSE)[[1]]["name"]
 ## data_1h <- influx_query(con, db = db, query = query_1h_mean, timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = TRUE)
-
-
-glimpse(data_1h)
+## glimpse(data_1h)
 
 data[, c("latitude", "longitude")] <- data$geohash %>% gh_decode()
 
