@@ -6,6 +6,8 @@ if (!require(leaflet)) devtools::install_github("rstudio/leaflet")
 if (!require(lubridate)) install.packages("lubridate")
 if (!require(influxdbr)) install.packages("influxdbr")
 if (!require(geohashTools)) install.packages("geohashTools")
+library(xts)
+library(dygraphs)
 
 
 ## conexión remota
@@ -28,8 +30,9 @@ sensores_ts <- function(db, measurements) {
 }
 
 ## "aqa"."autogen"."volker0004"
-query_time_series <- "SELECT mean(\"pm25\") AS \"pm25\" FROM %s WHERE time > now() - 1h GROUP BY time(10s) FILL(none)"
-query_1h_mean <- "SELECT mean(\"pm25\") AS \"pm25\", median(\"lat\") AS \"lat\", median(\"lng\") AS \"lng\" FROM %s WHERE time > now() - 1h GROUP BY time(1h) FILL(none) LIMIT 1"
+query_time_series <- "SELECT mean(\"pm25\") AS \"pm25\" FROM %s WHERE time > now() - 1h GROUP BY time(1m) FILL(none)"
+## query_stas <- "SELECT last(\"name\") AS \"name\" FROM \"fixed_stations_01\" WHERE time > now() - 1h GROUP BY time(1h), \"mac\" fill(none) LIMIT 1"
+## query_1h_mean <- "SELECT median(\"pm25\") AS \"pm25\" FROM \"fixed_stations_01\" WHERE time > now() - 1h GROUP BY time(1m), \"name\" fill(none)"
 query_n <- "SELECT median(\"pm25\") AS \"pm25\", last(\"name\") AS \"name\", last(\"geo\") AS \"geohash\" FROM \"fixed_stations_01\" WHERE time > now() - 1h GROUP BY time(1h), \"mac\" fill(none) LIMIT 1"
 
 query <- function(snsrs, type = "ts") {
@@ -55,6 +58,11 @@ popup_content <- function(query_str, sensorname, link = "ada") {
 
 ## data <- influx_query(con, db = db, query = query(sensores(db, measurements), "1h"), timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = FALSE)[[1]]
 data <- influx_query(con, db = db, query = query_n, timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = FALSE)[[1]]
+## data_stas <- influx_query(con, db = db, query = query_stas, timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = FALSE)[[1]]["name"]
+## data_1h <- influx_query(con, db = db, query = query_1h_mean, timestamp_format = c("n", "u", "ms", "s", "m", "h"), return_xts = TRUE)
+
+
+glimpse(data_1h)
 
 data[, c("latitude", "longitude")] <- data$geohash %>% gh_decode()
 
@@ -89,6 +97,8 @@ encuadre <- function(ciudad) {
     return(c(13.0497, 52.6601, 13.7981, 52.3613))
   } else if (ciudad == "global") {
     return(c(-177.2, 82.1, 206.0, -69.7))
+  } else if (ciudad == "costa") {
+    return(c(-76.970, 11.760, -70.983, 7.891))
   }
 }
 
@@ -102,6 +112,12 @@ shinyServer(function(input, output) {
         opacity = 0.9, fillOpacity = 0.9, radius = 20, fillColor = ~color, color = ~color, weight = 20, label = ~ as.character(as.integer(pm25)), labelOptions = labelOptions(noHide = TRUE, offset = c(0, 22), textOnly = TRUE, direction = "top", style = list("color" = "white", "font-weight" = "bold", "font-size" = "12px"))
       )
   })
+
+  ## output$dygraph <- renderDygraph({
+  ##   dygraph(data_1h$P25, order.by = data_1h$fixed_stations_01), main = "Exposición PM25", ylab = "μg/m³") %>%
+  ##     dySeries(label = "μg/m³") %>%
+  ##     dyRangeSelector()
+  ## })
 
   observe({
     leafletProxy("map", data = data) %>%

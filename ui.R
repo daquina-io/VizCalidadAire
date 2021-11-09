@@ -1,6 +1,7 @@
 library(shiny)
 library(leaflet)
 library(shinycssloaders)
+library(dygraphs)
 
 ## Define UI for dataset viewer application
 ## checkboxInput("legend", "Mostrar leyenda", TRUE),
@@ -22,11 +23,14 @@ ui <- function(request) {
           "Bogotá" = "bogota",
           "Cali" = "cali",
           "Medellín" = "medellin",
+          "Colombia-Costa Caribe" = "costa",
           "Lima" = "lima",
           "Bilbao" = "bilbao",
           "Berlín" = "berlin"
         )
       ),
+      dygraphOutput("dygraph"),
+      style = "padding: 8px; border-bottom: 1px solid #CCC; background: #FFFFEE;"
     )
   )
 }
