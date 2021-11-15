@@ -29,7 +29,7 @@ ui <- function(request) {
           "Berlín" = "berlin"
         )
       ),
-      dygraphOutput("dygraph"),
+      ## dygraphOutput("dygraph"),
       style = "padding: 8px; border-bottom: 1px solid #CCC; background: #FFFFEE;"
     )
   )
